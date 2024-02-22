@@ -8,13 +8,14 @@
 #include "vector.h"
 #include "../minilibx_opengl_20191021/mlx.h"
 
+#include <stdio.h>
 
 #define TOL 1E-4
 #define INF INFINITY
 #define SHIFT_VAL 2
 
-#define V_WIDTH 800
-#define V_HEIGHT 600
+#define V_W 800
+#define V_H 600
 #define V_D 1
 #define C_W 200
 #define C_H 200

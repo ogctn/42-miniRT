@@ -18,82 +18,94 @@ void cam_movements(int keycode, t_general *genel)
 
 t_vec3 canvas_to_viewport(int *x, int *y) // V_D represents the distance between the camera and the projection plane.
 {
-    return ((t_vec3){(*x)*V_WIDTH / C_W, (*y)*V_HEIGHT/C_H, V_D});
+    return ((t_vec3){(*x)*V_W / C_W + (V_W/2), (*y)*V_H/C_H +  (V_H/2), V_D});
 }
 
 
-t_roots	r_intersects_sphere(const t_ray *r, double *t, const t_sphere *s);
+t_roots	r_intersects_sphere(const t_vec3 *d, const t_sphere *s, const t_general *genel);
 
 
-t_color	trace_ray(t_vec3 o, t_vec3 d, double t_min, double t_max) // O the origin of the ray, 
+t_color	trace_ray(t_general *genel, t_vec3 *d, double t_min, double t_max) // O the origin of the ray, 
 {
+	t_vec3 *o = &genel->cam->origin;
 	double closest_t = INF;
-	t_sphere closest_sp = NULL;
-
-
-
+	t_sphere *closest_sp = NULL;
+	t_sphere *iter = genel->objs->sp;
+	t_roots r;
+	while (iter)
+	{
+		r = r_intersects_sphere(d, iter, genel);
+		if ((r.t1 <= t_max && r.t1 >= t_min) && r.t1 < closest_t)
+		{
+			closest_t = r.t1;
+			closest_sp = iter;
+		}
+		if ((r.t2 <= t_max && r.t2 >= t_min) && r.t2 < closest_t)
+		{
+			closest_t = r.t2;
+			closest_sp = iter;
+		}
+		iter = iter->next;
+	}
+	if (!closest_sp)
+		return ((t_color){.r = 155, .g = 155, .b = 155});
+	return ((t_color){.r = closest_sp->color.r, .g = closest_sp->color.g, .b = closest_sp->color.b});
 }
 
 int rgb_to_int(t_color *rgb)
 {
-	int color;
-	color = rgb->r;
-	color = (color << 8) | rgb->g;
-	color = (color << 8) | rgb->b;
-	return (color);
+	int c;
+	c = rgb->r;
+	c = (c << 8) | rgb->g;
+	c = (c << 8) | rgb->b;
+	return (c);
 }
 
-int rgb1(int r, int g, int b) {
-  int c = r;
-  c = (c << 8) | g;
-  c = (c << 8) | b;
-  return c;
-}
+void	my_pixel_put( t_img *img, int x, int y, int color );
 
 void render_sphere(t_general *genel)
 {
-	t_vec3 D;
+	t_vec3	d;
 	t_color color;
-	t_ray *r = genel->cam->ray;
 
 	int x = -C_W/2;
+
 	int y;
 
-	while (x <= C_W/2)
+	while (x < C_W/2)
 	{
-		y = -C_H/2;
-		while (y <= C_H/2)
+		y = C_H/2;
+		while (y > -C_H/2)
 		{
-			D = canvas_to_viewport(&x, &y);
-			color = trace_ray(r->origin, r->dir, 1, INF);
-			my_pixel_put( genel->mlx->img, x, y, rgb_to_int(&color) );
-			y++;
+			d = canvas_to_viewport(&x, &y);
+			color = trace_ray(genel, &d, 1, INF);
+
+			printf("%f %f\n", d.x, d.y);
+			my_pixel_put( &(genel->mlx->img), d.x, d.y, rgb_to_int(&color) );
+			y--;
 		}
 		x++;
 	}
-
 }
 
-
+#include <stdio.h>
 
 void	test_handler( int keycode, t_general *genel ) {
 
-	cam_movements(keycode, genel);
+	//cam_movements(keycode, genel);
     
 	//render_background( &(m->img), 0X18181AA * keycode / 100 + 300 );
 
 
 	render_sphere(genel);
 
-
-
 	mlx_put_image_to_window( genel->mlx->mlx_p, genel->mlx->win_p, genel->mlx->img.img, 0, 0 );
+
 }
 
 
 
 int main() {
-	t_general genel;
 
 	t_sphere s1 = {
 		.center = (t_vec3){3, -3, 12}, 
@@ -113,26 +125,30 @@ int main() {
 
 	t_ray r = {0, 0, 0};
 	t_cam cam = {
-		.origin = (t_vec3){0, 0, 0},
+		.origin = (t_vec3){0, 0, -15},
 		.dir = (t_vec3){0, 0, 1},
 		.fov = 70,
 		.ray = &r
 	};
+	t_general genel;
 	genel.cam = &cam;
-	genel.objs = &s1;
-
+	t_objs obj = {.sp = &s1};
+	genel.objs = &obj;
+	t_mlx	m;
+	genel.mlx = &m;
 	mlx_stuffs( &genel);
 
 	//t_viewport	vp = {};
 
 }
 
-t_roots	r_intersects_sphere(const t_ray *r, double *t, const t_sphere *s)
+t_roots	r_intersects_sphere(const t_vec3 *d, const t_sphere *s, const t_general *genel)
 {
-	t_vec3	co = v_substract(&r->origin, &s->center);
-	
-	double	a = v_dot(&r->dir, &r->dir);
-	double 	b = 2 * v_dot(&co, &r->dir);
+	const t_vec3 *o = &genel->cam->origin;
+	t_vec3	co = v_substract(o, &s->center);
+
+	double	a = v_dot(d, d);
+	double 	b = 2 * v_dot(&co, d);
 	double	c = v_dot(&co, &co) - (s->r * s->r);
 
 	double	discriminant = b * b - 4 * a * c;
