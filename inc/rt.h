@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "vector.h"
-#include "../minilibx_opengl_20191021/mlx.h"
+#include "../lib/mlx/mlx.h"
 
 
 #include <stdio.h>
@@ -19,6 +19,7 @@
 #define V_HEIGHT 600
 #define V_D 2
 
+#define IS_OBJECT(type) (type == SPHERE || type == PLANE || type == CYLINDER)
 
 typedef struct	s_roots {
 	double t1;
@@ -120,6 +121,9 @@ typedef struct s_general {
 
 }	t_general;
 
-
+void	allocate(t_general *d);
+void	set_sphere(t_general *d, t_sphere *s, int i);
+void	set_stuffs(t_general *d);
+void	main_loop(t_general *d);
 
 #endif

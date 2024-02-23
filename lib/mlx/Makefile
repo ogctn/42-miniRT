@@ -22,4 +22,3 @@ clean:
 	rm -f mlx_app
 
 re: clean all
-https://shop.intra.42.fr/

@@ -1,6 +1,5 @@
-#include "rt.h"
+#include "../inc/rt.h"
 
-#define IS_OBJECT(type) (type == SPHERE || type == PLANE || type == CYLINDER)
 
 void	mlx_stuffs( t_general * );
 void	my_mlx_pixel_put( t_mlx *, int, int, int );
@@ -11,14 +10,13 @@ t_roots	r_intersects_sphere( const t_vec3 *, const t_sphere *, const t_general *
 void	free_objects( t_general *genel) {
 	int i = -1;
 
-	// while (++i < genel->obj_count) {
-	// 	if (genel->obj_set[i].obj)
-	// 		free(genel->obj_set[i].obj);
-	// }
-	// if (genel->obj_set)
-	// 	free(genel->obj_set);
-	// if (genel->light_set)
-	// 	free(genel->light_set);
+	 while (++i < (int) genel->obj_count) {
+	 	if (genel->obj_set[i].obj)
+	 		free(genel->obj_set[i].obj);
+	 }
+	 if (genel->obj_set)
+	 	free(genel->obj_set);
+
 }
 
 int	free_exit( t_general *genel) {
@@ -54,9 +52,9 @@ void	cam_move( t_general *genel, int keycode ) {
 int handle_key(int keycode, t_general *genel)
 {
 	if ( keycode == KEY_ESC || keycode == KEY_Q ) free_exit( genel );	//printf( "%d\n", keycode );
-	
+
 	cam_move( genel, keycode );
-	
+
 	render_background( genel->mlx, 0x1818AA * keycode / 100 );
 	mlx_put_image_to_window( genel->mlx->mlx_p, genel->mlx->win_p, genel->mlx->img_p, 0, 0 );
 	return (0);
@@ -71,7 +69,7 @@ int handle_key(int keycode, t_general *genel)
 
 
 
-// t_color	trace_ray(t_general *genel, t_vec3 *d, double t_min, double t_max) // O the origin of the ray, 
+// t_color	trace_ray(t_general *genel, t_vec3 *d, double t_min, double t_max) // O the origin of the ray,
 // {
 // 	t_vec3 *o = &genel->cam->origin;
 // 	double closest_t = INF;
@@ -126,13 +124,13 @@ int rgb_to_int(t_color *rgb)
 // 			// d = canvas_to_viewport(&x, &y);
 // 			// color = trace_ray(genel, &d, 1, INF);
 
-			
+
 // 			my_mlx_pixel_put( genel->mlx, d.x, d.y, rgb_to_int(&color) );
 // 		}
 // 	}
 // }
 
-#include <stdio.h>
+
 
 
 void	new_mlx(t_general *d) {
@@ -206,33 +204,6 @@ void	main_loop(t_general *d) {
 
 }
 
-int main() {
-	t_general genel;
-
-	unsigned short sphere_count = 3;
-	genel.obj_count = sphere_count + 0;
-
-	allocate(&genel);
-	t_sphere *sphere_set = malloc(sizeof(t_sphere) * sphere_count);
-	sphere_set[0] = (t_sphere) { (t_vec3){0, 0, 5}, 1, (t_color){255, 0, 0} };
-	sphere_set[1] = (t_sphere) { (t_vec3){0, 0, 5}, 1, (t_color){255, 0, 0} };
-	sphere_set[2] = (t_sphere) { (t_vec3){0, 0, 5}, 1, (t_color){255, 0, 0} };
-	// unsigned short plane_count = 2;
-	// t_plane *plane_set = malloc(sizeof(t_plane) * plane_count);
-	// plane_set[0] = (t_plane) { (t_vec3){0, 0, 5}, (t_vec3){0, 1, 0}, (t_color){255, 0, 0} };
-	// plane_set[1] = (t_plane) { (t_vec3){0, 0, 5}, (t_vec3){0, 1, 0}, (t_color){255, 0, 0} };
-
-	unsigned short k = -1;
-	int i = -1;	while (++i < sphere_count) set_sphere(&genel, &sphere_set[i], ++k);
-	//	i = -1;	while (++i < plane_count) set_plane(&genel, &plane_set[i], ++k);
-
-
-	set_stuffs(&genel);
-
-	main_loop(&genel);
-	//mlx_stuffs( &genel);
-
-}
 
 t_roots	r_intersects_sphere(const t_vec3 *d, const t_sphere *s, const t_general *genel)
 {
