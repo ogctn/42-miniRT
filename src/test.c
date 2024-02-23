@@ -101,7 +101,8 @@ int handle_key(int keycode, t_general *genel)
 
 int rgb_to_int(t_color *rgb)
 {
-	int c;
+	int	c;
+
 	c = rgb->r;
 	c = (c << 8) | rgb->g;
 	c = (c << 8) | rgb->b;
@@ -186,7 +187,6 @@ void	allocate(t_general *d) {
 	new_mlx(d);
 	d->cam = malloc(sizeof(t_cam));
 	d->obj_set = malloc(sizeof(t_obj) * d->obj_count);
-	d->light_set = malloc(sizeof(t_light) * d->light_count);
 	d->screen = malloc(sizeof(t_screen));
 }
 
@@ -211,7 +211,7 @@ int main() {
 
 	unsigned short sphere_count = 3;
 	genel.obj_count = sphere_count + 0;
-	genel.light_count = 0;
+
 	allocate(&genel);
 	t_sphere *sphere_set = malloc(sizeof(t_sphere) * sphere_count);
 	sphere_set[0] = (t_sphere) { (t_vec3){0, 0, 5}, 1, (t_color){255, 0, 0} };
@@ -250,3 +250,7 @@ t_roots	r_intersects_sphere(const t_vec3 *d, const t_sphere *s, const t_general 
 	double t2 = (-b - sqrt(discriminant)) / (2 * a);
 	return ((t_roots){t1, t2});
 }
+
+// void __attribute__((destructor)) a(){
+// 	system("leaks test.out");
+// }

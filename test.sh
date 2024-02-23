@@ -7,6 +7,6 @@ gcc 		./src/test.c \
 	-I./minilibx_opengl_2019102 \
 	-framework Appkit -framework OpenGL \
 	-o ./test.out \
-	-fsanitize=address \
+#	-fsanitize=address \
 	
 ./test.out

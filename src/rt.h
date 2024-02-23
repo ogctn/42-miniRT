@@ -94,7 +94,6 @@ typedef struct s_parsed_objs {
 	t_sphere	*sp;
 	t_plane		*pl;
 	t_cylinder	*cy;
-	t_triangle	*tr;
 } t_parsed_objs;
 
 typedef struct s_obj {
@@ -117,8 +116,7 @@ typedef struct s_general {
 	t_screen		*screen;
 	unsigned int	obj_count;
 	t_obj			*obj_set;
-	unsigned int	light_count;
-	t_light			*light_set;
+	t_light			*light;
 
 }	t_general;
 
