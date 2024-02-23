@@ -1,12 +1,48 @@
 #include "rt.h"
 
-void render_background( t_img *img, int color );
-void mlx_stuffs(t_general *);
+#define IS_OBJECT(type) (type == SPHERE || type == PLANE || type == CYLINDER)
 
-void cam_movements(int keycode, t_general *genel)
-{
-	if ( keycode == KEY_ESC || keycode == KEY_Q ) exit( 0 );	//printf( "%d\n", keycode );
+void	mlx_stuffs( t_general * );
+void	my_mlx_pixel_put( t_mlx *, int, int, int );
+void	render_background( t_mlx *, int );
 
+t_roots	r_intersects_sphere( const t_vec3 *, const t_sphere *, const t_general *);
+
+void	free_objects( t_general *genel) {
+	int i = -1;
+
+	// while (++i < genel->obj_count) {
+	// 	if (genel->obj_set[i].obj)
+	// 		free(genel->obj_set[i].obj);
+	// }
+	// if (genel->obj_set)
+	// 	free(genel->obj_set);
+	// if (genel->light_set)
+	// 	free(genel->light_set);
+}
+
+int	free_exit( t_general *genel) {
+	if (genel)
+	{
+		if (genel->mlx->img_p)
+		{
+			mlx_destroy_image( genel->mlx->mlx_p, genel->mlx->img_p );
+			if (genel->mlx->win_p)
+				mlx_destroy_window( genel->mlx->mlx_p, genel->mlx->win_p );
+		}
+		free_objects(genel);
+		if (genel->cam)
+			free(genel->cam);
+		if (genel->screen)
+			free(genel->screen);
+		if (genel->mlx)
+			free(genel->mlx);
+	}
+	exit( 0 );
+}
+
+
+void	cam_move( t_general *genel, int keycode ) {
 	if ( keycode == KEY_A ) genel->cam->origin.x += SHIFT_VAL;
 	else if ( keycode == KEY_D ) genel->cam->origin.x -= SHIFT_VAL;
 	else if ( keycode == KEY_W ) genel->cam->origin.z += SHIFT_VAL;
@@ -15,42 +51,53 @@ void cam_movements(int keycode, t_general *genel)
 	else if ( keycode == KEY_DOWN ) genel->cam->origin.y -= SHIFT_VAL;
 }
 
-
-t_vec3 canvas_to_viewport(int *x, int *y) // V_D represents the distance between the camera and the projection plane.
+int handle_key(int keycode, t_general *genel)
 {
-    return ((t_vec3){(*x)*V_W / C_W + (V_W/2), (*y)*V_H/C_H +  (V_H/2), V_D});
+	if ( keycode == KEY_ESC || keycode == KEY_Q ) free_exit( genel );	//printf( "%d\n", keycode );
+	
+	cam_move( genel, keycode );
+	
+	render_background( genel->mlx, 0x1818AA * keycode / 100 );
+	mlx_put_image_to_window( genel->mlx->mlx_p, genel->mlx->win_p, genel->mlx->img_p, 0, 0 );
+	return (0);
 }
 
 
-t_roots	r_intersects_sphere(const t_vec3 *d, const t_sphere *s, const t_general *genel);
+// t_vec3 canvas_to_viewport(int *x, int *y) // V_D represents the distance between the camera and the projection plane.
+// {
+//     return ((t_vec3){(*x)*WIDTH / C_W , (*y)*HEIGHT/C_H , V_D});
+// }
 
 
-t_color	trace_ray(t_general *genel, t_vec3 *d, double t_min, double t_max) // O the origin of the ray, 
-{
-	t_vec3 *o = &genel->cam->origin;
-	double closest_t = INF;
-	t_sphere *closest_sp = NULL;
-	t_sphere *iter = genel->objs->sp;
-	t_roots r;
-	while (iter)
-	{
-		r = r_intersects_sphere(d, iter, genel);
-		if ((r.t1 <= t_max && r.t1 >= t_min) && r.t1 < closest_t)
-		{
-			closest_t = r.t1;
-			closest_sp = iter;
-		}
-		if ((r.t2 <= t_max && r.t2 >= t_min) && r.t2 < closest_t)
-		{
-			closest_t = r.t2;
-			closest_sp = iter;
-		}
-		iter = iter->next;
-	}
-	if (!closest_sp)
-		return ((t_color){.r = 155, .g = 155, .b = 155});
-	return ((t_color){.r = closest_sp->color.r, .g = closest_sp->color.g, .b = closest_sp->color.b});
-}
+
+
+// t_color	trace_ray(t_general *genel, t_vec3 *d, double t_min, double t_max) // O the origin of the ray, 
+// {
+// 	t_vec3 *o = &genel->cam->origin;
+// 	double closest_t = INF;
+// 	t_sphere *closest_sp = NULL;
+// 	t_sphere *iter = genel->objs->sp;
+// 	t_roots r;
+// 	while (iter)
+// 	{
+// 		r = r_intersects_sphere(d, iter, genel);
+// 		if ((r.t1 <= t_max && r.t1 >= t_min) && r.t1 < closest_t)
+// 		{
+// 			closest_t = r.t1;
+// 			closest_sp = iter;
+// 		}
+// 		if ((r.t2 <= t_max && r.t2 >= t_min) && r.t2 < closest_t)
+// 		{
+// 			closest_t = r.t2;
+// 			closest_sp = iter;
+// 		}
+// 		iter = iter->next;
+// 	}
+// 	if (!closest_sp)
+// 		return ((t_color){.r = 155, .g = 155, .b = 155});
+// 	return ((t_color){.r = closest_sp->color.r, .g = closest_sp->color.g, .b = closest_sp->color.b});
+// }
+
 
 int rgb_to_int(t_color *rgb)
 {
@@ -61,84 +108,129 @@ int rgb_to_int(t_color *rgb)
 	return (c);
 }
 
-void	my_pixel_put( t_img *img, int x, int y, int color );
 
-void render_sphere(t_general *genel)
-{
-	t_vec3	d;
-	t_color color;
+// void render(t_general *genel)
+// {
+// 	t_vec3	d;
+// 	t_color color;
 
-	int x = -C_W/2;
+// 	int y = -1;
+// 	int x;
 
-	int y;
+// 	while (++y < V_HEIGHT)
+// 	{
+// 		x = -1;
+// 		while (++x > V_WIDTH)
+// 		{
+// 			// d = canvas_to_viewport(&x, &y);
+// 			// color = trace_ray(genel, &d, 1, INF);
 
-	while (x < C_W/2)
-	{
-		y = C_H/2;
-		while (y > -C_H/2)
-		{
-			d = canvas_to_viewport(&x, &y);
-			color = trace_ray(genel, &d, 1, INF);
-
-			printf("%f %f\n", d.x, d.y);
-			my_pixel_put( &(genel->mlx->img), d.x, d.y, rgb_to_int(&color) );
-			y--;
-		}
-		x++;
-	}
-}
+			
+// 			my_mlx_pixel_put( genel->mlx, d.x, d.y, rgb_to_int(&color) );
+// 		}
+// 	}
+// }
 
 #include <stdio.h>
 
-void	test_handler( int keycode, t_general *genel ) {
 
-	//cam_movements(keycode, genel);
-    
-	//render_background( &(m->img), 0X18181AA * keycode / 100 + 300 );
+void	new_mlx(t_general *d) {
+	if (!d->mlx)
+		free_exit(d);
+	d->mlx->mlx_p = mlx_init();
+	if (!d->mlx->mlx_p)
+		free_exit(d);
+	d->mlx->win_p = mlx_new_window( d->mlx->mlx_p, V_WIDTH, V_HEIGHT, "tnoyan's team" );
+	if (!d->mlx->win_p)
+		free_exit(d);
+	d->mlx->img_p = mlx_new_image( d->mlx->mlx_p, V_WIDTH, V_HEIGHT );
+	if (!d->mlx->img_p)
+		free_exit(d);
+	d->mlx->addr = mlx_get_data_addr( d->mlx->img_p, &d->mlx->bpp, &d->mlx->line_len, &d->mlx->endian );
+	if (!d->mlx->addr)
+		free_exit(d);
+}
 
+void	init_cam(t_general *d) {
+	if (!d->cam)
+		free_exit(d);
+	d->cam->origin = (t_vec3){0, 0, 0};
+	d->cam->dir = (t_vec3){0, 0, 1};
+	d->cam->fov = 60;
+}
 
-	render_sphere(genel);
+void	init_screen(t_general *d) {
+	if (!d->screen)
+		free_exit(d);
+	d->screen->aspect_ratio = V_WIDTH / V_HEIGHT;
+	d->screen->half_width = V_WIDTH / 2;
+	d->screen->half_height = V_HEIGHT / 2;
+	d->screen->viewport_width = 1 / tan(d->cam->fov / 2);
+	d->screen->viewport_height = d->screen->viewport_width / d->screen->aspect_ratio;
+}
 
-	mlx_put_image_to_window( genel->mlx->mlx_p, genel->mlx->win_p, genel->mlx->img.img, 0, 0 );
+void	set_sphere(t_general *d, t_sphere *s, int i) {
+	d->obj_set[i].type = SPHERE;
+	d->obj_set[i].obj = s;
+	d->obj_set[i].idx = i;
+}
 
+void	set_light(t_general *d, t_light *l, int i) {
+	d->obj_set[i].type = LIGHT;
+	d->obj_set[i].obj = l;
+	d->obj_set[i].idx = i;
+}
+
+void	allocate(t_general *d) {
+	d->mlx = malloc(sizeof(t_mlx));
+	new_mlx(d);
+	d->cam = malloc(sizeof(t_cam));
+	d->obj_set = malloc(sizeof(t_obj) * d->obj_count);
+	d->light_set = malloc(sizeof(t_light) * d->light_count);
+	d->screen = malloc(sizeof(t_screen));
+}
+
+void	set_stuffs(t_general *d) {
+	init_cam(d);
+	init_screen(d);
+	//set_obj(d, obj);
+	//set_light(d, light);
 }
 
 
 
+void	main_loop(t_general *d) {
+	mlx_hook( d->mlx->win_p, 17, 1, &free_exit, d);
+	mlx_hook( d->mlx->win_p, EVENT_KEY_PRESS, 1, &handle_key, d );
+	mlx_loop( d->mlx->mlx_p );
+
+}
+
 int main() {
-
-	t_sphere s1 = {
-		.center = (t_vec3){3, -3, 12}, 
-		.r = 5,
-		.color = (t_color){255, 0, 0} //red
-	};
-	t_sphere s2 = {
-		.center = (t_vec3){5, 0,15}, 
-		.r = 5,
-		.color = (t_color){0, 0, 255} //blue
-	};
-	t_sphere s3 = {
-		.center = (t_vec3){-5, 0, 15}, 
-		.r = 5,
-		.color = (t_color){0, 255, 0} //green
-	};		s1.next = &s2;	s2.next = &s3;	s3.next = NULL;
-
-	t_ray r = {0, 0, 0};
-	t_cam cam = {
-		.origin = (t_vec3){0, 0, -15},
-		.dir = (t_vec3){0, 0, 1},
-		.fov = 70,
-		.ray = &r
-	};
 	t_general genel;
-	genel.cam = &cam;
-	t_objs obj = {.sp = &s1};
-	genel.objs = &obj;
-	t_mlx	m;
-	genel.mlx = &m;
-	mlx_stuffs( &genel);
 
-	//t_viewport	vp = {};
+	unsigned short sphere_count = 3;
+	genel.obj_count = sphere_count + 0;
+	genel.light_count = 0;
+	allocate(&genel);
+	t_sphere *sphere_set = malloc(sizeof(t_sphere) * sphere_count);
+	sphere_set[0] = (t_sphere) { (t_vec3){0, 0, 5}, 1, (t_color){255, 0, 0} };
+	sphere_set[1] = (t_sphere) { (t_vec3){0, 0, 5}, 1, (t_color){255, 0, 0} };
+	sphere_set[2] = (t_sphere) { (t_vec3){0, 0, 5}, 1, (t_color){255, 0, 0} };
+	// unsigned short plane_count = 2;
+	// t_plane *plane_set = malloc(sizeof(t_plane) * plane_count);
+	// plane_set[0] = (t_plane) { (t_vec3){0, 0, 5}, (t_vec3){0, 1, 0}, (t_color){255, 0, 0} };
+	// plane_set[1] = (t_plane) { (t_vec3){0, 0, 5}, (t_vec3){0, 1, 0}, (t_color){255, 0, 0} };
+
+	unsigned short k = -1;
+	int i = -1;	while (++i < sphere_count) set_sphere(&genel, &sphere_set[i], ++k);
+	//	i = -1;	while (++i < plane_count) set_plane(&genel, &plane_set[i], ++k);
+
+
+	set_stuffs(&genel);
+
+	main_loop(&genel);
+	//mlx_stuffs( &genel);
 
 }
 

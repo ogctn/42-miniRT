@@ -8,24 +8,22 @@
 #include "vector.h"
 #include "../minilibx_opengl_20191021/mlx.h"
 
+
 #include <stdio.h>
 
 #define TOL 1E-4
 #define INF INFINITY
 #define SHIFT_VAL 2
 
-#define V_W 800
-#define V_H 600
-#define V_D 1
-#define C_W 200
-#define C_H 200
+#define V_WIDTH 800
+#define V_HEIGHT 600
+#define V_D 2
 
 
 typedef struct	s_roots {
 	double t1;
 	double t2;
 } t_roots;
-
 
 typedef struct	s_ray {
 	t_vec3	origin;
@@ -36,17 +34,14 @@ typedef struct	s_cam {
 	t_vec3	origin;
 	t_vec3	dir;
 	double	fov;
-	t_ray	*ray;
 } t_cam;
 
-
-typedef enum {
+typedef enum type {
 	PLANE,
 	SPHERE,
 	CYLINDER,
-	TRIANGLE,
+	LIGHT,
 } e_type;
-
 
 typedef struct s_color {
 	int r;
@@ -54,47 +49,77 @@ typedef struct s_color {
 	int b;
 }	t_color;
 
-
 typedef struct s_sphere {
 	t_vec3			center;
 	double			r;
 	t_color			color;
-	struct s_sphere	*next;
 } t_sphere;
 
+typedef struct s_plane {
+	t_vec3			normal;
+	t_vec3			point;
+	t_color			color;
+} t_plane;
 
+typedef struct s_cylinder {
+	t_vec3			origin;
+	t_vec3			dir;
+	double			r;
+	t_color			color;
+} t_cylinder;
 
-typedef struct s_img {
-	void	*img;
-	char	*addr;
-	int		bpp;
-	int		line_len;
-	int		endian;
-}	t_img;
+typedef struct s_triangle {
+	t_vec3			p1;
+	t_vec3			p2;
+	t_vec3			p3;
+	t_color			color;
+} t_triangle;
+
+typedef struct s_light {
+	t_vec3			origin;
+	t_color			color;
+} t_light;
 
 typedef struct s_mlx {
 	void	*mlx_p;
 	void	*win_p;
-	t_img	img;
-
+	void	*img_p;
+	char	*addr;
+	int		bpp;
+	int		line_len;
+	int		endian;
 }	t_mlx;
 
-typedef struct s_viewport {
-	double	vw;
-	double	vh;
-	double	d;
-
-}	t_viewport;
-
-typedef struct s_objs {
+typedef struct s_parsed_objs {
 	t_sphere	*sp;
-} t_objs;
+	t_plane		*pl;
+	t_cylinder	*cy;
+	t_triangle	*tr;
+} t_parsed_objs;
+
+typedef struct s_obj {
+	void			*obj;
+	e_type			type;
+	unsigned int	idx;
+} t_obj;
+
+typedef struct t_screen {
+	double	aspect_ratio;
+	double	half_height;
+	double	half_width;
+	double	viewport_height;
+	double	viewport_width;
+} t_screen;
 
 typedef struct s_general {
-	t_mlx	*mlx;
-	t_cam	*cam;
+	t_mlx			*mlx;
+	t_cam			*cam;
+	t_screen		*screen;
+	unsigned int	obj_count;
+	t_obj			*obj_set;
+	unsigned int	light_count;
+	t_light			*light_set;
 
-	t_objs	*objs;
 }	t_general;
 
 
