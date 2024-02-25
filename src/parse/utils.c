@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:44:48 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/24 03:52:19 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/02/25 19:19:00 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ void	obj_counter(t_data *data)
 	char	*line;
 	int		i;
 
-	i = 0;
 	line = get_next_line(data->fd);
 	while (line)
 	{
+		i = 0;
 		while (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')
 			i++;
 		if (line[i] == 'c' || line[i] == 'p' || line[i] == 's')

@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:27:25 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/25 18:58:04 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/02/25 19:20:29 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	initialize(t_data *data, char *str)
 	allocate(data);
 	init_fd(data, str);
 	init_elements(data);
+	close_fd(data);
 	control_elements(data);
 }
 
@@ -98,7 +99,7 @@ int	find_and_direct(char *line, t_data *data)
 	i = 0;
 	while (line[i] == ' ' || line[i] == '\t' || line[i] == '\n')
 		i++;
-	if (line[i] == '\0')
+	if (line[i] == '\0' || line[i] == '#')
 		return (1);
 	else if (!ft_strcmp(ft_substr(line, i, 2), "A "))
 		return (init_ambient (data, line));

@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:32:43 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/25 18:57:54 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/02/25 19:22:16 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ int	main(int ac, char **av)
 	initialize(&data, av[1]);
 	printf("A: %f %d\n",data.ambient_light->brightness, data.ambient_light->color.r);
 	printf("C: %f,%f\n",data.cam->origin.x, data.cam->fov);
-	printf("sp: %d and %d\n",data.obj_set[0].type, data.obj_set[1].idx);
+	printf("%d\n",data.obj_count);
+	printf("sp: %d and %d\n",data.obj_set[0].type, data.obj_set[1].type);
 }
 
 //int main(int ac, char **av) {
