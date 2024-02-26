@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_objects.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 00:52:24 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/24 04:08:37 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/02/26 02:22:18 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ int	init_obj(t_data *data, char *line, int type)
 	data->obj_set[i].idx = i;
 	data->obj_set[i + 1].obj = NULL;
 	data->obj_set[i].type = type;
+	data->obj_set[i].f_intersects = f_intersects;
+	data->obj_set[i].f_get_color = f_get_color;
 	if (type == 0)
 		return (init_pl(data, line, i));
 	if (type == 1)

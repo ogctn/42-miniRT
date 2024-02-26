@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:36:36 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/25 19:50:14 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/02/26 17:51:16 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <unistd.h>
 # include <stdio.h>
-#include <stdbool.h>
+# include <stdbool.h>
 # include <stdlib.h>
 # include <fcntl.h>
 # include <math.h>
@@ -23,15 +23,17 @@
 # include "../lib/libft/libft.h"
 # include "./get_next_line.h"
 # include "./vector.h"
-#include "./keys.h"
+# include "./keys.h"
 
 # define TOL 1E-4
 # define INF INFINITY
 # define SHIFT_VAL 2
 
-# define WIDTH 800
-# define HEIGHT 600
-# define V_D 2
+# define WIDTH 1200
+# define HEIGHT WIDTH
+# define ASPECT_RATIO_X 4
+# define ASPECT_RATIO_Y 3
+
 
 typedef struct s_mlx
 {
@@ -72,9 +74,9 @@ typedef struct s_color
 
 typedef struct s_sphere
 {
-	t_color			color;
-	t_vec3			center;
-	double			r;
+	t_color	color;
+	t_vec3	center;
+	double	r;
 }	t_sphere;
 
 typedef struct s_plane
@@ -94,10 +96,14 @@ typedef struct s_cylinder
 }	t_cylinder;
 
 
+typedef struct s_obj t_obj;
+
 typedef struct s_obj
 {
 	void			*obj;
 	t_type			type;
+	double			(*f_intersects)(const t_ray *, const t_obj *);
+	t_color			(*f_get_color)(const t_obj *);
 	unsigned int	idx;
 }	t_obj;
 
@@ -122,11 +128,13 @@ typedef struct s_cam
 
 typedef struct t_screen
 {
+	t_vec3	up;
+	t_vec3	right;
+	double	focal_length;
 	double	aspect_ratio;
-	double	half_height;
-	double	half_width;
-	double	viewport_height;
-	double	viewport_width;
+	double	y_pix_min;
+	double	y_pix_max;
+
 }	t_screen;
 
 typedef struct s_data
@@ -170,4 +178,11 @@ void	set_sphere(t_data *d, t_sphere *s, int i);
 void	set_stuffs(t_data *d);
 void	main_loop(t_data *d);
 void	new_mlx(t_data *d);
+
+
+double	intersects_sphere(const t_ray *ray, const t_sphere *sp);
+double	f_intersects(const t_ray *ray, const t_obj *obj);
+t_color	f_get_color(const t_obj *obj);
+
+
 #endif
