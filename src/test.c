@@ -75,7 +75,7 @@ int handle_key(int keycode, t_data *genel)
 
 t_color	trace_ray(t_data *data, const t_ray *ray)
 {
-	t_color color = {0, 0, 0};
+	t_color color = {155, 155, 115};
 	const t_obj *obj;
 	double distance;
 	double min_distance;
