@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:36:36 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/26 20:01:43 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/02/28 19:33:50 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ typedef struct s_cylinder
 	double				height;
 }	t_cylinder;
 
-
 typedef struct s_obj t_obj;
 
 typedef struct s_obj
@@ -152,27 +151,26 @@ typedef struct s_data
 	t_obj		*obj_set;
 }	t_data;
 
-int		control_extension(char *str);
 void	initialize(t_data *data, char *str);
 void	init_fd(t_data *data, char *str);
 void	close_fd(t_data *data);
-void	init_elements(t_data *data);
-int		find_and_direct(char *line, t_data *data);
-void	allocate(t_data *d);
 
 int		init_ambient(t_data *data, char *line);
 int		init_cam(t_data *data, char *line);
 int		init_light(t_data *data, char *line);
-int		init_sp(t_data *data, char *line, int index);
-int		init_pl(t_data *data, char *line, int index);
-int		init_cy(t_data *data, char *line, int index);
 int		init_obj(t_data *data, char *line, int type);
+
+int		ft_assign_color(char **ptr, t_color *clr);
+int		ft_assign_vec(char **ptr, t_vec3 *vec, int flag);
 
 int		size_2d(char **ptr);
 int		ft_strcmp(char *s1, char *s2);
-void	control_elements(t_data *data);
 void	free_2d(char **d);
-void	obj_counter(t_data *data);
+double	ft_atod(const char *str);
+
+int		control_rgb(t_color clr);
+void	control_elements(t_data *data);
+int		control_extension(char *str);
 
 void	set_sphere(t_data *d, t_sphere *s, int i);
 void	set_stuffs(t_data *d);

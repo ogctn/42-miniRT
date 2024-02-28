@@ -1,7 +1,7 @@
 #include "../inc/minirt.h"
 #include <stdio.h>
 
-void	mlx_stuffs( t_data * );
+void	mlx_stuffs(t_data * );
 void	my_mlx_pixel_put( t_mlx *, int, int, int );
 void	render_background( t_mlx *, int );
 
@@ -131,7 +131,7 @@ void render(t_data *data)
 			color = trace_ray(data, &ray);
 
 			my_mlx_pixel_put( data->mlx, pix_x, pix_y, rgb_to_int(&color) );
-		
+
 			pix_x++;
 		}
 		pix_y++;

@@ -11,11 +11,11 @@ SRCS	=	$(SRC_DIR)/intersections.c \
 			$(SRC_DIR)/main.c \
 			$(SRC_DIR)/parse/utils.c \
 			$(SRC_DIR)/parse/parser.c \
-			$(SRC_DIR)/parse/init_cy.c \
+			$(SRC_DIR)/parse/assign_features.c \
+			$(SRC_DIR)/parse/control.c \
 			$(SRC_DIR)/parse/init_elements.c \
-			$(SRC_DIR)/parse/init_pl.c\
-			$(SRC_DIR)/parse/init_sp.c \
 			$(SRC_DIR)/parse/init_objects.c \
+			$(SRC_DIR)/parse/ft_atod.c\
 			$(SRC_DIR)/parse/get_next_line.c \
 			$(SRC_DIR)/parse/get_next_line_utils.c \
 			$(SRC_DIR)/test_mlx.c \

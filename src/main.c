@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:32:43 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/26 13:37:13 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/02/28 20:08:36 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,7 @@ int	main(int ac, char **av)
 	if (ac != 2 || control_extension(av[1]))
 		return (printf("Error: Wrong argument"), 1);
 	initialize(&data, av[1]);
-	
 	print_data(data);
-	
-
 	main_loop(&data);
 	return (0);
 }
