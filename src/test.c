@@ -60,14 +60,6 @@ int handle_key(int keycode, t_data *genel)
 
 	render( genel );
 	printf("cam->z: %f\n", genel->cam->origin.z);
-	for (int i = 0; i < 25; i++)
-	{
-		for (int j = 0; j < 25; j++)
-			my_mlx_pixel_put( genel->mlx, i, j, 0xFFFF00 );
-	}
-
-
-	
 
 	mlx_put_image_to_window( genel->mlx->mlx_p, genel->mlx->win_p, genel->mlx->img_p, 0, 0 );
 	return (0);
@@ -118,7 +110,7 @@ void render(t_data *data)
 	t_ray ray;
 	ray.origin = data->cam->origin;
 
-	t_color color = (t_color){0, 0, 0};
+	t_color color;// = (t_color){0, 0, 0};
 	t_vec3 mapped_coords = {0, 0, 0};
 
 	int pix_vertical_margin = (double)HEIGHT * (1 - (1 / data->screen->aspect_ratio)) / 2;
@@ -204,6 +196,7 @@ void	main_loop(t_data *d) {
 	init_camera_up_right(d);
 
 	render( d );
+	mlx_put_image_to_window( d->mlx->mlx_p, d->mlx->win_p, d->mlx->img_p, 0, 0 );
 
 	mlx_hook( d->mlx->win_p, 17, 1, &free_exit, d);
 	mlx_hook( d->mlx->win_p, EVENT_KEY_PRESS, 1, &handle_key, d );
