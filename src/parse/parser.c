@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:27:25 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/28 19:42:47 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/02/29 17:54:21 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static void	allocate(t_data *d)
 {
 	d->mlx = malloc(sizeof(t_mlx));
 	d->cam = malloc(sizeof(t_cam));
+	d->default_cam = malloc(sizeof(t_cam));
 	new_mlx(d);
 	d->screen = malloc(sizeof(t_screen));
 	d->light = malloc(sizeof(t_light));

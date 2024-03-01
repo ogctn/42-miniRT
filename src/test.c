@@ -39,14 +39,20 @@ int	free_exit( t_data *genel) {
 	exit( 0 );
 }
 
+void	reset_camera( t_data *genel) {
+	genel->cam->origin = genel->default_cam->origin;
+	genel->cam->dir = genel->default_cam->dir;
+	genel->cam->fov = genel->default_cam->fov;
+}
 
 void	cam_move( t_data *genel, int keycode ) {
-	if ( keycode == KEY_A ) genel->cam->origin.x += SHIFT_VAL;
-	else if ( keycode == KEY_D ) genel->cam->origin.x -= SHIFT_VAL;
-	else if ( keycode == KEY_W ) genel->cam->origin.z += SHIFT_VAL;
-	else if ( keycode == KEY_S ) genel->cam->origin.z -= SHIFT_VAL;
-	else if ( keycode == KEY_UP ) genel->cam->origin.y += SHIFT_VAL;
-	else if ( keycode == KEY_DOWN ) genel->cam->origin.y -= SHIFT_VAL;
+	if ( keycode == KEY_D ) genel->cam->origin.x += SHIFT_VAL;
+	else if ( keycode == KEY_A ) genel->cam->origin.x -= SHIFT_VAL;
+	else if ( keycode == KEY_C ) genel->cam->origin.z += SHIFT_VAL;
+	else if ( keycode == KEY_V ) genel->cam->origin.z -= SHIFT_VAL;
+	else if ( keycode == KEY_W ) genel->cam->origin.y += SHIFT_VAL;
+	else if ( keycode == KEY_S ) genel->cam->origin.y -= SHIFT_VAL;
+	else if ( keycode == KEY_R ) reset_camera( genel );
 }
 
 void render(t_data *data);
@@ -55,19 +61,19 @@ int rgb_to_int(const t_color *rgb);
 
 int handle_key(int keycode, t_data *genel)
 {
-	if ( keycode == KEY_ESC || keycode == KEY_Q ) free_exit( genel );	//printf( "%d\n", keycode );
+	if ( keycode == KEY_ESC ) free_exit( genel );	//printf( "%d\n", keycode );
 	cam_move( genel, keycode );
 
 	render( genel );
-	printf("cam->z: %f\n", genel->cam->origin.z);
+	printf("camera position: x:%f y:%f z:%f\n", genel->cam->origin.x, genel->cam->origin.y, genel->cam->origin.z);
 
 	mlx_put_image_to_window( genel->mlx->mlx_p, genel->mlx->win_p, genel->mlx->img_p, 0, 0 );
 	return (0);
 }
 
-t_color	trace_ray(t_data *data, const t_ray *ray)
+const t_obj	*find_first_obj(t_data *data, const t_ray *ray, double *t)
 {
-	t_color color = {155, 155, 115};
+	const t_obj *ret = NULL;
 	const t_obj *obj;
 	double distance;
 	double min_distance;
@@ -82,10 +88,11 @@ t_color	trace_ray(t_data *data, const t_ray *ray)
 		if (distance > 0 && distance < min_distance)
 		{
 			min_distance = distance;
-			color = obj->f_get_color(obj);
+			ret = obj;
 		}
 	}
-	return (color);
+	*t = min_distance;
+	return (ret);
 }
 
 int rgb_to_int(const t_color *rgb)
@@ -93,8 +100,8 @@ int rgb_to_int(const t_color *rgb)
 	int	c;
 
 	c = rgb->r;
-	c = (c << 8) | rgb->g;
-	c = (c << 8) | rgb->b;
+	c = (c << 8) | (int)rgb->g;
+	c = (c << 8) | (int)rgb->b;
 	return (c);
 }
 
@@ -105,13 +112,67 @@ void	pixel_to_virtual(t_screen *s, int *x, int *y, t_vec3 *iter_coords)
 	iter_coords->z = s->focal_length;
 }
 
+void clamp_color(t_color *color)
+{
+	color->r = color->r > 255 ? 255 : color->r;
+	color->r = color->r < 0 ? 0 : color->r;
+
+	color->g = color->g > 255 ? 255 : color->g;
+	color->g = color->g < 0 ? 0 : color->g;
+
+	color->b = color->b > 255 ? 255 : color->b;
+	color->b = color->b < 0 ? 0 : color->b;
+}
+
+t_vec3 f_get_normal_sphere(const t_obj *obj, t_vec3 *hit_point)
+{
+	t_sphere *sp = obj->obj;
+	t_vec3 normal;
+
+	normal = v_substract(hit_point, &sp->center);
+	normal = v_normalize(&normal);
+	return (normal);
+}
+
+t_vec3 f_get_normal_plane(const t_obj *obj, t_vec3 *hit_point)
+{
+	t_plane *pl = (t_plane *)obj->obj;
+	t_vec3 normal;
+
+	(void)hit_point;
+	normal = pl->normal;
+	return (normal);
+}
+
+t_vec3 f_get_normal(const t_obj *obj, t_vec3 *hit_point)
+{
+	t_vec3 normal;
+
+	if (obj->type == SPHERE)
+		normal = f_get_normal_sphere(obj, hit_point);
+	else if (obj->type == PLANE)
+		normal = f_get_normal_plane(obj, hit_point);
+	else
+		normal = (t_vec3){0, 0, 0};
+	return (normal);
+}
+
 void render(t_data *data)
 {
 	t_ray ray;
 	ray.origin = data->cam->origin;
 
-	t_color color;// = (t_color){0, 0, 0};
-	t_vec3 mapped_coords = {0, 0, 0};
+	const t_obj *hitted_obj;
+	double t;
+
+	double theta;
+
+	t_color color;
+	t_vec3 mapped_coords;
+
+	t_vec3 hit_point = {0, 0, 0};
+	t_vec3 normal = {0, 0, 0};
+	t_vec3 point_to_light = {0, 0, 0};
 
 	int pix_vertical_margin = (double)HEIGHT * (1 - (1 / data->screen->aspect_ratio)) / 2;
 
@@ -124,12 +185,32 @@ void render(t_data *data)
 		pix_x = -1;
 		while (++pix_x < WIDTH)
 		{
+			t = INF;
+
 			pixel_to_virtual(data->screen, &pix_x, &pix_y, &mapped_coords);
 
 			ray.dir = v_normalize(&mapped_coords);
 
-			color = trace_ray(data, &ray);
+			hitted_obj = find_first_obj(data, &ray, &t);
 
+			if (hitted_obj){
+				hit_point = v_multiply(&ray.dir, t);
+				hit_point = v_add(&ray.origin, &hit_point);
+				normal = hitted_obj->f_get_normal(hitted_obj, &hit_point);
+
+
+				point_to_light = v_substract(&data->light->origin, &hit_point);
+				point_to_light	= v_normalize(&point_to_light);
+				
+				theta = v_dot(&normal, &point_to_light);
+				theta = theta < 0 ? 0 : theta;
+
+				color = hitted_obj->f_get_color(hitted_obj);
+
+				//color = (t_color){color.r * theta, color.g * theta, color.b * theta};
+			}
+			else
+				color = (t_color){118, 118, 118};
 			my_mlx_pixel_put( data->mlx, pix_x, pix_y, rgb_to_int(&color) );
 
 			pix_x++;
@@ -173,24 +254,8 @@ void	init_screen(t_data *d) {
 	d->screen->y_pix_max = (WIDTH / d->screen->aspect_ratio) + d->screen->y_pix_min;
 }
 
-		void print_intersection_points(t_data *d, t_ray ray){
-			double distance;
-			t_vec3 point;
-
-			for (int i = 0; i < d->obj_count; i++)
-			{
-			distance = d->obj_set[i].f_intersects(&ray, &(d->obj_set[i]));
-			point = v_multiply(&ray.dir, distance);
-			point = v_add(&ray.origin, &point);
-			printf("Distance for object %d: %.2f\n", i, point.z);
-			printf("\tIntersection point:\tx:%.3f y:%.3f z:%.3f\n", point.x, point.y, point.z);
-			}
-		}
-
 
 void	main_loop(t_data *d) {
-
-	print_intersection_points(d, (t_ray){.origin = d->cam->origin, .dir = d->cam->dir});
 
 	init_screen(d);
 	init_camera_up_right(d);

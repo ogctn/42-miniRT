@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_elements.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:39:23 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/28 20:05:18 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/02/29 01:00:18 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@ int	init_ambient(t_data *data, char *line)
 	return (free_2d(ptr), 1);
 }
 
+static void	copy_cam(t_cam *dest, t_cam *src)
+{
+	dest->origin = src->origin;
+	dest->dir = src->dir;
+	dest->fov = src->fov;
+}
+
 int	init_cam(t_data *data, char *line)
 {
 	char	**ptr;
@@ -44,6 +51,7 @@ int	init_cam(t_data *data, char *line)
 	if (!ft_assign_vec(ptr_3, &data->cam->dir, 1))
 		return (free_2d(ptr), printf("Wrong Definition"), 0);
 	data->cam->fov = ft_atod(ptr[3]);
+	copy_cam(data->default_cam, data->cam);
 	data->c += 1;
 	return (free_2d(ptr), 1);
 }

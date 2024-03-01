@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 23:20:08 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/02/26 02:23:22 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/03/01 05:06:27 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,24 @@ t_color	f_get_color(const t_obj *obj)
 {
 	if (obj->type == SPHERE)
 		return (((t_sphere *)obj->obj)->color);
-	// else if (obj->type == PLANE)
-	// 	return (((t_plane *)obj->obj)->color);
+	else if (obj->type == PLANE)
+		return (((t_plane *)obj->obj)->color);
 	// else if (obj->type == CYLINDER)
 	// 	return (((t_cylinder *)obj->obj)->color);
-	// else if (obj->type == SQUARE)
-	// 	return (((t_square *)obj->obj)->color);
 	return ((t_color){0, 0, 0});
 }
 
 double	intersects_sphere(const t_ray *ray, const t_sphere *sp);
+double	intersects_plane(const t_ray *ray, const t_plane *pl);
 
 double	f_intersects(const t_ray *ray, const t_obj *obj)
 {
 	if (obj->type == SPHERE)
 		return (intersects_sphere(ray, (t_sphere *)obj->obj));
-	// else if (obj->type == PLANE)
-	// 	return (intersects_plane(ray, (t_plane *)obj->obj));
+	else if (obj->type == PLANE)
+		return (intersects_plane(ray, (t_plane *)obj->obj));
 	// else if (obj->type == CYLINDER)
 	// 	return (intersects_cylinder(ray, (t_cylinder *)obj->obj));
-	// else if (obj->type == SQUARE)
-	// 	return (intersects_square(ray, (t_square *)obj->obj));
-	
 	return (0.0);
 }
 
@@ -57,8 +53,23 @@ double	intersects_sphere(const t_ray *ray, const t_sphere *sp)
 		return (INF);
 	h = sqrt(h);
 	t = -b - h;
-	if (t < TOL)
+	if (t < TOL && t > -TOL)
 		return (0.0); // Inside the sphere
 	return (t);
 }
 
+double	intersects_plane(const t_ray *ray, const t_plane *pl)
+{
+	t_vec3	tmp;
+	double	denom;
+	double	t;
+
+	denom = v_dot(&pl->normal, &ray->dir);
+	if (denom <= TOL && denom >= -TOL)
+		return (INF);
+	tmp = v_substract(&pl->point, &ray->origin);
+	t = v_dot(&tmp, &pl->normal) / denom;
+	if (t <= TOL && t >= -TOL)
+		return (INF);
+	return (t);
+}

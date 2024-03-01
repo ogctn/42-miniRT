@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:36:36 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/28 19:33:50 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/02/29 20:23:55 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ typedef enum e_type
 
 typedef struct s_color
 {
-	int	r;
-	int	g;
-	int	b;
+	double	r;
+	double	g;
+	double	b;
 }	t_color;
 
 typedef struct s_sphere
@@ -103,6 +103,7 @@ typedef struct s_obj
 	t_type			type;
 	double			(*f_intersects)(const t_ray *, const t_obj *);
 	t_color			(*f_get_color)(const t_obj *);
+	t_vec3			(*f_get_normal)(const t_obj *, t_vec3 *);
 	unsigned int	idx;
 }	t_obj;
 
@@ -149,6 +150,7 @@ typedef struct s_data
 	t_ambient	*ambient_light;
 	t_light		*light;
 	t_obj		*obj_set;
+	t_cam		*default_cam;
 }	t_data;
 
 void	initialize(t_data *data, char *str);
@@ -181,6 +183,7 @@ void	new_mlx(t_data *d);
 double	intersects_sphere(const t_ray *ray, const t_sphere *sp);
 double	f_intersects(const t_ray *ray, const t_obj *obj);
 t_color	f_get_color(const t_obj *obj);
+t_vec3	f_get_normal(const t_obj *obj, t_vec3 *hit_point);
 
 
 #endif

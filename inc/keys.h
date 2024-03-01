@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 14:53:52 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/02/22 11:15:37 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/02/29 01:05:50 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,9 @@
 # define KEY_S 1
 # define KEY_D 2
 # define KEY_W 13
-# define KEY_H 4
 # define KEY_C 8
+# define KEY_V 9
 # define KEY_R 15
-# define KEY_Q 12
-# define KEY_1 18
-# define KEY_2 19
-# define KEY_3 20
-# define KEY_4 21
-# define KEY_5 23
-# define KEY_6 22
-# define KEY_7 26
-# define KEY_8 28
 # define KEY_STAR 27
 # define KEY_MINUS 24
 # define M_BUTTON_1 1
