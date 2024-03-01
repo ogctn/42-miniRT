@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:32:43 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/29 19:42:52 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/03/01 06:41:21 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,3 +28,6 @@ int	main(int ac, char **av)
 	return (0);
 }
 
+// Cylinder intersection formula is uncompleted. [intersections.c: intersects_cylinder() ] 
+// Camera direction and rotation will be implemented. [ test.c: pixel_to_virtual() ]
+// Shadows will be corrected. [ test.c: any_obj_between_light_and_hit_point() ]

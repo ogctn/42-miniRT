@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:36:36 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/29 20:23:55 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/03/01 06:55:49 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ typedef struct t_screen
 {
 	t_vec3	up;
 	t_vec3	right;
+	t_vec3	forward;
 	double	focal_length;
 	double	aspect_ratio;
 	double	y_pix_min;

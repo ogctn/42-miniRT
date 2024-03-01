@@ -97,12 +97,14 @@ const t_obj	*find_first_obj(t_data *data, const t_ray *ray, double *t)
 
 int rgb_to_int(const t_color *rgb)
 {
-	int	c;
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
 
-	c = rgb->r;
-	c = (c << 8) | (int)rgb->g;
-	c = (c << 8) | (int)rgb->b;
-	return (c);
+	r = (unsigned char)rgb->r;
+	g = (unsigned char)rgb->g;
+	b = (unsigned char)rgb->b;
+	return (r << 16 | g << 8 | b);
 }
 
 void	pixel_to_virtual(t_screen *s, int *x, int *y, t_vec3 *iter_coords)
@@ -110,18 +112,6 @@ void	pixel_to_virtual(t_screen *s, int *x, int *y, t_vec3 *iter_coords)
 	iter_coords->x = -1 + (2 * (*x + 0.5) / WIDTH) ;
 	iter_coords->y = 1 - 2.0 * ((*y + 0.5 - s->y_pix_min) / HEIGHT);
 	iter_coords->z = s->focal_length;
-}
-
-void clamp_color(t_color *color)
-{
-	color->r = color->r > 255 ? 255 : color->r;
-	color->r = color->r < 0 ? 0 : color->r;
-
-	color->g = color->g > 255 ? 255 : color->g;
-	color->g = color->g < 0 ? 0 : color->g;
-
-	color->b = color->b > 255 ? 255 : color->b;
-	color->b = color->b < 0 ? 0 : color->b;
 }
 
 t_vec3 f_get_normal_sphere(const t_obj *obj, t_vec3 *hit_point)
@@ -141,6 +131,21 @@ t_vec3 f_get_normal_plane(const t_obj *obj, t_vec3 *hit_point)
 
 	(void)hit_point;
 	normal = pl->normal;
+	normal = v_normalize(&normal);
+	return (normal);
+}
+
+t_vec3	f_get_normal_cylinder(const t_obj *obj, t_vec3 *hit_point)
+{
+	t_cylinder *cyl = (t_cylinder *)obj->obj;
+	t_vec3 normal;
+	t_vec3 oc;
+	t_vec3 tmp2;
+
+	oc = v_substract(hit_point, &cyl->origin);
+	tmp2 = v_multiply(&cyl->dir, v_dot(&oc, &cyl->dir));
+	normal = v_substract(&oc, &tmp2);
+	normal = v_normalize(&normal);
 	return (normal);
 }
 
@@ -152,9 +157,55 @@ t_vec3 f_get_normal(const t_obj *obj, t_vec3 *hit_point)
 		normal = f_get_normal_sphere(obj, hit_point);
 	else if (obj->type == PLANE)
 		normal = f_get_normal_plane(obj, hit_point);
+	else if (obj->type == CYLINDER)
+		normal = f_get_normal_cylinder(obj, hit_point);
 	else
 		normal = (t_vec3){0, 0, 0};
 	return (normal);
+}
+
+bool any_obj_between_light_and_hit_point(t_data *data, t_vec3 *hit_point, t_vec3 *point_to_light, double t)
+{
+	t_ray ray;
+	ray.origin = *hit_point;
+	ray.dir = v_substract(point_to_light, hit_point);
+	ray.dir = v_normalize(&ray.dir);
+	
+	const t_obj *hitted_obj;
+	double t2;
+
+	int i = -1;
+	while (++i < data->obj_count)
+	{
+		hitted_obj = &data->obj_set[i];
+		t2 = hitted_obj->f_intersects(&ray, hitted_obj);
+		if (t2 >= -TOL && t2 < t)
+			return (true);
+	}
+	return (false);
+}
+
+void	compute_illumination(t_data *data, t_color *color, t_vec3 *hit_point, t_vec3 *normal)
+{
+	t_vec3 point_to_light_dir;
+	double theta;
+	double intensity;
+
+	point_to_light_dir = v_substract(&data->light->origin, hit_point);
+	point_to_light_dir = v_normalize(&point_to_light_dir);
+	theta = acos(v_dot(normal, &point_to_light_dir));
+	if (theta > M_PI / 2.){
+		*color = (t_color){0, 0, 0};
+		intensity = 0;
+	}
+	else
+		intensity = data->light->brightness * (1 - (theta / (M_PI / 2.)));
+	if (intensity > 0)
+	{
+		color->r = color->r * intensity;
+		color->g = color->g * intensity;
+		color->b = color->b * intensity;
+	}
 }
 
 void render(t_data *data)
@@ -164,8 +215,6 @@ void render(t_data *data)
 
 	const t_obj *hitted_obj;
 	double t;
-
-	double theta;
 
 	t_color color;
 	t_vec3 mapped_coords;
@@ -178,6 +227,7 @@ void render(t_data *data)
 
 	int pix_y;
 	int pix_x;
+
 
 	pix_y = pix_vertical_margin - 1;
 	while (++pix_y < data->screen->y_pix_max)
@@ -193,24 +243,30 @@ void render(t_data *data)
 
 			hitted_obj = find_first_obj(data, &ray, &t);
 
+			hit_point = v_multiply(&ray.dir, t);
+			hit_point = v_add(&ray.origin, &hit_point);
+
 			if (hitted_obj){
-				hit_point = v_multiply(&ray.dir, t);
-				hit_point = v_add(&ray.origin, &hit_point);
-				normal = hitted_obj->f_get_normal(hitted_obj, &hit_point);
-
-
-				point_to_light = v_substract(&data->light->origin, &hit_point);
-				point_to_light	= v_normalize(&point_to_light);
-				
-				theta = v_dot(&normal, &point_to_light);
-				theta = theta < 0 ? 0 : theta;
-
 				color = hitted_obj->f_get_color(hitted_obj);
+			
+				point_to_light = v_substract(&hit_point, &data->light->origin);
+				point_to_light = v_normalize(&point_to_light);
+				normal = hitted_obj->f_get_normal(hitted_obj, &hit_point);
+			
+				compute_illumination(data, &color, &hit_point, &normal);
+				
 
-				//color = (t_color){color.r * theta, color.g * theta, color.b * theta};
+				// if(!any_obj_between_light_and_hit_point(data, &hit_point, &data->light->origin, t) ){
+				// 	color = (t_color){}
+				// }
+
+
+				
 			}
 			else
 				color = (t_color){118, 118, 118};
+			
+
 			my_mlx_pixel_put( data->mlx, pix_x, pix_y, rgb_to_int(&color) );
 
 			pix_x++;
@@ -252,6 +308,13 @@ void	init_screen(t_data *d) {
 	d->screen->focal_length = 1 / tan((d->cam->fov / 2) * (M_PI / 180));
 	d->screen->y_pix_min = ((double)HEIGHT - (WIDTH / d->screen->aspect_ratio)) / 2;
 	d->screen->y_pix_max = (WIDTH / d->screen->aspect_ratio) + d->screen->y_pix_min;
+	d->screen->forward = v_substract(&d->cam->dir, &d->cam->origin);
+	d->screen->forward = v_normalize(&d->screen->forward);
+	// https://stackoverflow.com/questions/14607640/rotating-a-vector-in-3d-space
+	d->screen->up = (t_vec3){d->screen->forward.x, -d->screen->forward.z, d->screen->forward.y};
+	d->screen->up = v_normalize(&d->screen->up);
+	d->screen->right = v_cross(&d->screen->forward, &d->screen->up);
+	d->screen->right = v_normalize(&d->screen->right);
 }
 
 
