@@ -84,28 +84,114 @@ double	intersects_cylinder(const t_ray *ray, const t_cylinder *cy)
 	double	c;
 	double	d;
 	double	t;
+	double	t3;
+	double	t4;
+	double	min;
 	t_vec3	oc;
 	t_vec3	tmp;
 	t_vec3	tmp2;
+	t_vec3	p1;
+	t_vec3	pi;
+	t_vec3	q3;
+	t_vec3	q4;
+	t_vec3	p2;
+	t_vec3	va;
+	int t1_flag = 1;
+	int t3_flag = 1;
+	int t4_flag = 1;
+
+	tmp = v_multiply(&cy->dir,cy->height);
+	p2  = v_add(&cy->origin,&tmp);
+	//p1  = v_substract(&cy->origin,&tmp);
+	p1 = cy->origin;
+	va = v_substract(&p2,&p1);
+	va = v_normalize(&va);
 
 	oc = v_substract(&ray->origin, &cy->origin);
-	tmp = v_multiply(&cy->dir, v_dot(&ray->dir, &cy->dir));
+	tmp = v_multiply(&va, v_dot(&ray->dir, &va));
 	tmp = v_substract(&ray->dir, &tmp);
 	a = v_dot(&tmp, &tmp);
-	tmp2 = v_multiply(&cy->dir, v_dot(&oc, &cy->dir));
+	tmp2 = v_multiply(&va, v_dot(&oc, &va));
 	tmp2 = v_substract(&oc, &tmp2);
 	b = 2 * v_dot(&tmp, &tmp2);
-	tmp2 = v_multiply(&cy->dir, v_dot(&oc, &cy->dir));
+	tmp2 = v_multiply(&va, v_dot(&oc, &va));
 	tmp2 = v_substract(&oc, &tmp2);
-	tmp = v_multiply(&cy->dir, v_dot(&oc, &cy->dir));
-	tmp = v_substract(&oc, &tmp);
-	c = v_dot(&tmp2, &tmp) - cy->r * cy->r;
+	c = v_dot(&tmp2, &tmp2) - cy->r * cy->r;
 	d = b * b - 4 * a * c;
-	
 	if (d < 0)
-		return (INF);
+		t1_flag = 0;
 	t = (-b - sqrt(d)) / (2 * a);
 	if (t < TOL && t > -TOL)
+		t1_flag = 0;
+	tmp = v_multiply(&ray->dir,t); 
+	pi = v_add(&ray->origin, &tmp);
+	tmp = v_substract(&pi,&p1);
+	a = v_dot(&va,&tmp);
+	tmp = v_substract(&pi,&p2);
+	b = v_dot(&va,&tmp);
+	if (a < 0 || b > 0)
+		t1_flag = 0;
+	b = v_dot(&va,&ray->origin);
+	c = v_dot(&va,&p1);
+	a = v_dot(&va,&ray->dir);
+	t3 = - ((b-c) / a); 
+	tmp = v_substract(&ray->origin,&p2);
+	c = v_dot(&va,&p2);
+	t4 = - ((b-c) / a); 
+	tmp = v_multiply(&ray->dir,t3);
+	q3 = v_add(&ray->origin,&tmp);
+	tmp = v_multiply(&ray->dir,t4);
+	q4 = v_add(&ray->origin,&tmp);
+	tmp = v_substract(&q3,&p1);
+	tmp2 = v_substract(&q4,&p2);
+	a = v_dot(&tmp,&tmp);
+	b = v_dot(&tmp2,&tmp2);
+	if(t3 < 0)
+		t3_flag = 0;
+	if(t4 < 0)
+		t4_flag = 0;	
+	if(a >= (cy->r*cy->r))
+		t3_flag = 0;
+	if(b >= (cy->r*cy->r))
+		t4_flag = 0;
+	if(t3_flag == 0 && t4_flag == 0 && t1_flag == 0)
 		return (INF);
-	return (t);
+	else if(t3_flag == 0 && t4_flag == 0 ) 
+		return(t);
+	else if(t1_flag == 0 && t3_flag == 0)
+		return(t4);
+	else if(t1_flag == 0 && t4_flag == 0)
+		return(t3);
+	else if(t1_flag == 0)
+	{
+		if(t3 < t4)
+			return(t3);
+		else
+			return(t4);
+	}
+	else if(t3_flag == 0)
+	{
+		if(t < t4)
+			return(t);
+		else
+			return(t4);
+	}
+	else if(t4_flag == 0)
+	{
+		if(t < t3)
+			return(t);
+		else
+			return(t3);
+	}
+	else
+	{
+		if(t3 < t4)
+			min = t3;
+		else
+			min = t4;
+		if(t < min)
+			return(t);
+		else
+			return(min);
+	}
 }

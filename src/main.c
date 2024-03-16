@@ -22,7 +22,7 @@ int	main(int ac, char **av)
 	t_data	data;
 
 	if (ac != 2 || control_extension(av[1]))
-		return (printf("Error: Wrong argument"), 1);
+		return (printf("Error!\nWrong argument"), 1);
 	initialize(&data, av[1]);
 	main_loop(&data);
 	return (0);

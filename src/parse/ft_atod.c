@@ -69,13 +69,9 @@ static double	calculate_number(const char *str, int sign)
 double	ft_atod(const char *str)
 {
 	double	result;
-	double	fraction;
 	int		sign;
-	int		infraction;
 
-	fraction = 1.0;
 	sign = 1;
-	infraction = 0;
 	while (*str == ' ' || *str == '\t')
 		str++;
 	if (!control_atod(str))
