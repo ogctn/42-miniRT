@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:36:36 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/03/01 06:55:49 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/05 09:37:12 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,12 @@
 # define INF INFINITY
 # define SHIFT_VAL 2
 
-# define WIDTH 1000
+# define WIDTH 1200
 # define HEIGHT WIDTH
-# define ASPECT_RATIO_X 4
-# define ASPECT_RATIO_Y 3
+# define ASPECT_RATIO_X 16
+# define ASPECT_RATIO_Y 9
+
+# define COLOR_MIX_RATIO 0.55
 
 
 typedef struct s_mlx
@@ -137,6 +139,14 @@ typedef struct t_screen
 	double	y_pix_max;
 
 }	t_screen;
+
+typedef struct s_shade_info
+{
+	t_color		*color;
+	t_vec3		*hit_point;
+	t_vec3		*surface_normal;
+	t_vec3		*point_to_light_dir;
+}	t_shade_info;
 
 typedef struct s_data
 {

@@ -65,7 +65,6 @@ int handle_key(int keycode, t_data *genel)
 	cam_move( genel, keycode );
 
 	render( genel );
-	printf("camera position: x:%f y:%f z:%f\n", genel->cam->origin.x, genel->cam->origin.y, genel->cam->origin.z);
 
 	mlx_put_image_to_window( genel->mlx->mlx_p, genel->mlx->win_p, genel->mlx->img_p, 0, 0 );
 	return (0);
@@ -179,10 +178,42 @@ bool any_obj_between_light_and_hit_point(t_data *data, t_vec3 *hit_point, t_vec3
 	{
 		hitted_obj = &data->obj_set[i];
 		t2 = hitted_obj->f_intersects(&ray, hitted_obj);
-		if (t2 >= -TOL && t2 < t)
+		if (t2 >= 0 && t2 < t)
 			return (true);
 	}
 	return (false);
+}
+
+t_color color_multiply(t_color *color, double factor)
+{
+	t_color ret;
+
+	ret.r = color->r * factor;
+	if (ret.r > 255)
+		ret.r = 255;
+	ret.g = color->g * factor;
+	if (ret.g > 255)
+		ret.g = 255;
+	ret.b = color->b * factor;
+	if (ret.b > 255)
+		ret.b = 255;
+	return (ret);
+}
+
+t_color color_add(t_color *color1, t_color *color2)
+{
+	t_color ret;
+
+	ret.r = color1->r + color2->r;
+	if (ret.r > 255)
+		ret.r = 255;
+	ret.g = color1->g + color2->g;
+	if (ret.g > 255)
+		ret.g = 255;
+	ret.b = color1->b + color2->b;
+	if (ret.b > 255)
+		ret.b = 255;
+	return (ret);
 }
 
 void	compute_illumination(t_data *data, t_color *color, t_vec3 *hit_point, t_vec3 *normal)
@@ -208,6 +239,46 @@ void	compute_illumination(t_data *data, t_color *color, t_vec3 *hit_point, t_vec
 	}
 }
 
+void color_mix(t_color *color, t_color *ambient, t_color *light, double ratio)
+{
+	color->r = ambient->r * (1 - ratio) + light->r * ratio;
+	if (color->r > 255)
+		color->r = 255;
+	color->g = ambient->g * (1 - ratio) + light->g * ratio;
+	if (color->g > 255)
+		color->g = 255;
+	color->b = ambient->b * (1 - ratio) + light->b * ratio;
+	if (color->b > 255)
+		color->b = 255;
+}
+
+
+// void	compute_illumination(t_data *data, t_shade_info *s)
+// {
+// 	double theta;
+// 	double intensity;
+
+// 	theta = acos(v_dot(s->surface_normal, s->point_to_light_dir));
+// 	if (theta > M_PI / 2.)
+// 		intensity = 0;
+// 	else
+// 		intensity = data->light->brightness * (1 - (theta / (M_PI / 2.)));
+// 	if (intensity > 0)
+// 		color_multiply(s->color, 0.5 * intensity);
+// }
+
+t_shade_info fill_shade_info(t_color *color, t_vec3 *hit_point, t_vec3 *surface_normal, t_vec3 *point_to_light_dir)
+{
+	t_shade_info shade_info;
+
+	shade_info.color = color;
+	shade_info.hit_point = hit_point;
+	shade_info.surface_normal = surface_normal;
+	shade_info.point_to_light_dir = point_to_light_dir;
+	return (shade_info);
+}
+
+
 void render(t_data *data)
 {
 	t_ray ray;
@@ -216,12 +287,14 @@ void render(t_data *data)
 	const t_obj *hitted_obj;
 	double t;
 
-	t_color color;
+	t_color color, color1, color2;
 	t_vec3 mapped_coords;
 
 	t_vec3 hit_point = {0, 0, 0};
-	t_vec3 normal = {0, 0, 0};
-	t_vec3 point_to_light = {0, 0, 0};
+	t_vec3 surface_normal = {0, 0, 0};
+	t_vec3 point_to_light_dir = {0, 0, 0};
+
+	t_shade_info shade_info;
 
 	int pix_vertical_margin = (double)HEIGHT * (1 - (1 / data->screen->aspect_ratio)) / 2;
 
@@ -248,17 +321,22 @@ void render(t_data *data)
 
 			if (hitted_obj){
 				color = hitted_obj->f_get_color(hitted_obj);
-			
-				point_to_light = v_substract(&hit_point, &data->light->origin);
-				point_to_light = v_normalize(&point_to_light);
-				normal = hitted_obj->f_get_normal(hitted_obj, &hit_point);
-			
-				compute_illumination(data, &color, &hit_point, &normal);
+				color1 = color_multiply(&color, data->ambient_light->brightness);
+
+				point_to_light_dir = v_substract(&hit_point, &data->light->origin);
+				point_to_light_dir = v_normalize(&point_to_light_dir);
+				surface_normal = hitted_obj->f_get_normal(hitted_obj, &hit_point);
+				shade_info = fill_shade_info(&color, &hit_point, &surface_normal, &point_to_light_dir);
+
+				//compute_illumination(data, &shade_info);
+color2 = color;
+compute_illumination(data, &color2, &hit_point, &surface_normal);
 				
 
-				// if(!any_obj_between_light_and_hit_point(data, &hit_point, &data->light->origin, t) ){
-				// 	color = (t_color){}
-				// }
+				if(any_obj_between_light_and_hit_point(data, &hit_point, &data->light->origin, t) ){
+					color2 = (t_color){0,0,0};
+				}
+color_mix(&color, &color1, &color2, COLOR_MIX_RATIO);
 
 
 				

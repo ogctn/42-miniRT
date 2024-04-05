@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 00:52:24 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/29 20:02:42 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/05 09:47:38 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int	init_sp(t_data *data, char *line, int index)
 	ptr_3 = ft_split(ptr[3], ',');
 	if (!ft_assign_color(ptr_3, &new->color))
 		return (free_2d(ptr), printf("Error!\nWrong Definition"), 0);
-	new->r = ft_atod(ptr[2]);
+	new->r = ft_atod(ptr[2]) / 2;
 	if (new->r <= 0)
 		return (free_2d(ptr), printf("Error!\nWrong Definition"), 0);
 	free_2d(ptr);
