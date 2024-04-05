@@ -6,20 +6,11 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:32:43 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/05 09:55:26 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/05 16:29:23 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minirt.h"
-
-// https://graphics.cs.wisc.edu/WP/cs559-fall2016/files/2016/12/shirley_chapter_4.pdf
-// https://graphicscompendium.com/raytracing/02-camera
-// https://web.cse.ohio-state.edu/~shen.94/681/Site/Slides_files/basic_algo.pdf
-// https://web.cse.ohio-state.edu/~shen.94/681/Site/Slides_files/shadow.pdf
-// https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/implementing-the-raytracing-algorithm.html
-//
-//
-
 
 int	main(int ac, char **av)
 {
