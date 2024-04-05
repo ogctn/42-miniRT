@@ -1,0 +1,13 @@
+https://graphics.cs.wisc.edu/WP/cs559-fall2016/files/2016/12/shirley_chapter_4.pdf
+https://graphicscompendium.com/raytracing/02-camera
+https://web.cse.ohio-state.edu/~shen.94/681/Site/Slides_files/basic_algo.pdf
+https://web.cse.ohio-state.edu/~shen.94/681/Site/Slides_files/shadow.pdf
+https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/implementing-the-raytracing-algorithm.html
+https://cs.wellesley.edu/~cs307/readings/09-lighting.html
+https://www.gabrielgambetta.com/computer-graphics-from-scratch/03-light.html
+https://learnopengl.com/Lighting/Basic-Lighting
+
+
+https://www.youtube.com/watch?v=A61S_2swwAc
+https://www.youtube.com/watch?v=9K9ZYq6KgFY&list=PL3WoIG-PLjSt54LvzY2SuBQDl-cXa11Tm&index=2
+https://www.youtube.com/watch?v=KBK6g6RFgdA&list=PL3WoIG-PLjSt54LvzY2SuBQDl-cXa11Tm&index=11
