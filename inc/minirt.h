@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:36:36 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 14:04:09 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/21 14:14:32 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ typedef struct s_cylinder
 	double				height;
 }	t_cylinder;
 
-typedef struct s_obj t_obj;
+typedef struct s_obj	t_obj;
 
 typedef struct s_obj
 {
@@ -113,6 +113,7 @@ typedef struct s_light
 {
 	t_vec3	origin;
 	double	brightness;
+	t_color	color;
 }	t_light;
 
 typedef struct s_ambient

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:27:25 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/29 17:54:21 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/21 14:16:23 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static int	find_and_direct(char *line, t_data *data)
 		return (init_obj (data, line, CYLINDER));
 	else
 	{
-		printf ("ERROR!\nAn incorrect element or definiton was detected");
+		printf ("ERROR!\nAn incorrect element or definiton was detected\n");
 		exit (1);
 	}
 }

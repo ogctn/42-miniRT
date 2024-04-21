@@ -1,32 +1,46 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/21 14:19:06 by sgundogd          #+#    #+#             */
+/*   Updated: 2024/04/21 14:26:03 by sgundogd         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/minirt.h"
 #include <stdio.h>
 
-void	mlx_stuffs(t_data * );
-void	my_mlx_pixel_put( t_mlx *, int, int, int );
-void	render_background( t_mlx *, int );
+void	mlx_stuffs(t_data *a);
+void	my_mlx_pixel_put(t_mlx *a, int b, int c, int d);
+void	render_background( t_mlx *a, int b);
 
 
-void	free_objects( t_data *genel) {
-	int i = -1;
+void	free_objects( t_data *genel)
+{
+	int	i;
 
-	 while (++i < (int) genel->obj_count) {
-	 	if (genel->obj_set[i].obj)
-	 		free(genel->obj_set[i].obj);
-	 }
-	 if (genel->obj_set)
-	 	free(genel->obj_set);
-
+	i = -1;
+	while (++i < (int) genel->obj_count)
+	{
+		if (genel->obj_set[i].obj)
+			free(genel->obj_set[i].obj);
+	}
+	if (genel->obj_set)
+		free(genel->obj_set);
 }
 
-int	free_exit( t_data *genel) {
-	//(void)genel;
+int	free_exit( t_data *genel)
+{
 	if (genel)
 	{
 		if (genel->mlx->img_p)
 		{
-			mlx_destroy_image( genel->mlx->mlx_p, genel->mlx->img_p );
+			mlx_destroy_image(genel->mlx->mlx_p, genel->mlx->img_p);
 			if (genel->mlx->win_p)
-				mlx_destroy_window( genel->mlx->mlx_p, genel->mlx->win_p );
+				mlx_destroy_window(genel->mlx->mlx_p, genel->mlx->win_p);
 		}
 		free_objects(genel);
 		if (genel->cam)
@@ -36,37 +50,45 @@ int	free_exit( t_data *genel) {
 		if (genel->mlx)
 			free(genel->mlx);
 	}
-	exit( 0 );
+	exit (0);
 }
 
-void	reset_camera( t_data *genel) {
+void	reset_camera(t_data *genel)
+{
 	genel->cam->origin = genel->default_cam->origin;
 	genel->cam->dir = genel->default_cam->dir;
 	genel->cam->fov = genel->default_cam->fov;
 }
 
-void	cam_move( t_data *genel, int keycode ) {
-	if ( keycode == KEY_D ) genel->cam->origin.x += SHIFT_VAL;
-	else if ( keycode == KEY_A ) genel->cam->origin.x -= SHIFT_VAL;
-	else if ( keycode == KEY_C ) genel->cam->origin.z += SHIFT_VAL;
-	else if ( keycode == KEY_V ) genel->cam->origin.z -= SHIFT_VAL;
-	else if ( keycode == KEY_W ) genel->cam->origin.y += SHIFT_VAL;
-	else if ( keycode == KEY_S ) genel->cam->origin.y -= SHIFT_VAL;
-	else if ( keycode == KEY_R ) reset_camera( genel );
+void	cam_move(t_data *genel, int keycode)
+{
+	if (keycode == KEY_D)
+		genel->cam->origin.x += SHIFT_VAL;
+	else if (keycode == KEY_A)
+		genel->cam->origin.x -= SHIFT_VAL;
+	else if (keycode == KEY_C)
+		genel->cam->origin.z += SHIFT_VAL;
+	else if (keycode == KEY_V)
+		genel->cam->origin.z -= SHIFT_VAL;
+	else if (keycode == KEY_W)
+		genel->cam->origin.y += SHIFT_VAL;
+	else if (keycode == KEY_S)
+		genel->cam->origin.y -= SHIFT_VAL;
+	else if (keycode == KEY_R)
+		reset_camera(genel);
 }
 
-void render(t_data *data);
+void	render(t_data *data);
+int		rgb_to_int(const t_color *rgb);
 
-int rgb_to_int(const t_color *rgb);
-
-int handle_key(int keycode, t_data *genel)
+int	handle_key(int keycode, t_data *d)
 {
-	if ( keycode == KEY_ESC ) free_exit( genel );	//printf( "%d\n", keycode );
-	cam_move( genel, keycode );
+	if (keycode == KEY_ESC)
+		free_exit(d);
+	cam_move(d, keycode);
+	render(d);
 
-	render( genel );
-
-	mlx_put_image_to_window( genel->mlx->mlx_p, genel->mlx->win_p, genel->mlx->img_p, 0, 0 );
+	mlx_put_image_to_window(d->mlx->mlx_p, d->mlx->win_p, d->mlx->img_p, 0, 0);
 	return (0);
 }
 
@@ -180,7 +202,7 @@ bool any_obj_between_light_and_hit_point(t_data *data, t_vec3 *hit_point, t_vec3
 	ray.origin = *hit_point;
 	ray.dir = v_substract(point_to_light, hit_point);
 	ray.dir = v_normalize(&ray.dir);
-	
+
 	const t_obj *hitted_obj;
 	double t2;
 
@@ -197,7 +219,7 @@ bool any_obj_between_light_and_hit_point(t_data *data, t_vec3 *hit_point, t_vec3
 
 t_color color_multiply(t_color *color, double factor)
 {
-	t_color ret;
+	t_color	ret;
 
 	ret.r = color->r * factor;
 	if (ret.r > 255)
@@ -341,7 +363,7 @@ void render(t_data *data)
 				//compute_illumination(data, &shade_info);
 color2 = color;
 compute_illumination(data, &color2, &hit_point, &surface_normal);
-				
+
 
 				if(any_obj_between_light_and_hit_point(data, &hit_point, &data->light->origin, t) ){
 					color2 = (t_color){0,0,0};
@@ -349,11 +371,11 @@ compute_illumination(data, &color2, &hit_point, &surface_normal);
 color_mix(&color, &color1, &color2, COLOR_MIX_RATIO);
 
 
-				
+
 			}
 			else
 				color = (t_color){118, 118, 118};
-			
+
 			my_mlx_pixel_put( data->mlx, pix_x, pix_y, rgb_to_int(&color) );
 
 		}
