@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:17:41 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/22 01:07:05 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 02:26:02 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,7 @@ int	ft_assign_color(char **ptr, t_color *clr)
 int	ft_assign_vec(char **ptr, t_vec3 *vec, int flag)
 {
 	if (size_2d(ptr) != 3)
-	{
-		free_2d(ptr);
-		return (0);
-	}
+		return (free_2d(ptr), 0);
 	vec->x = ft_atod(ptr[0]);
 	vec->y = ft_atod(ptr[1]);
 	vec->z = ft_atod(ptr[2]);

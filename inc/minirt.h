@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:44 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 01:24:00 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/22 02:25:03 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,6 @@ typedef struct s_obj
 	double			(*f_intersects)(const t_ray *, const t_obj *);
 	t_color			(*f_get_color)(const t_obj *);
 	t_vec3			(*f_get_normal)(const t_obj *, t_vec3 *);
-	unsigned int	idx;
 }	t_obj;
 
 typedef struct s_light

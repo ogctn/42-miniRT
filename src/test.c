@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:55 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 01:48:42 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/22 02:44:52 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,9 +131,10 @@ void	pixel_to_virtual(t_data *d, int *x, int *y, t_vec3 *mapped_coords)
 	t_vec3	tmp2;
 	double	ndc_x;
 	double	ndc_y;
-	
-	ndc_x = ((2 / (d->screen->x_pix_max - d->screen->x_pix_min)) * (*x + 0.5)) -
-		((2 * d->screen->x_pix_min / (d->screen->x_pix_max - d->screen->x_pix_min)) + 1);
+
+	ndc_x = ((2 / (d->screen->x_pix_max - d->screen->x_pix_min)) * (*x + 0.5))
+		- ((2 * d->screen->x_pix_min
+				/ (d->screen->x_pix_max - d->screen->x_pix_min)) + 1);
 	ndc_y = ((-2.0 / HEIGHT) * (*y + 0.5)) + 1;
 	tmp1 = v_multiply(&d->screen->right, ndc_x);
 	tmp2 = v_multiply(&d->screen->up, ndc_y);
@@ -194,13 +195,14 @@ t_vec3	f_get_normal(const t_obj *obj, t_vec3 *hit_point)
 	return (normal);
 }
 
-bool	any_obj_between_light_and_hit_point(t_data *data, t_vec3 *hit_point, t_vec3 *point_to_light, double t)
+bool	any_obj_between_light_and_hit_point(t_data *data,
+	t_vec3 *hit_point, t_vec3 *point_to_light, double t)
 {
 	t_ray		ray;
 	const t_obj	*hitted_obj;
 	double		t2;
 	int			i;
-	
+
 	ray.origin = *hit_point;
 	ray.dir = v_substract(point_to_light, hit_point);
 	ray.dir = v_normalize(&ray.dir);
@@ -247,7 +249,8 @@ t_color	color_add(t_color *color1, t_color *color2)
 	return (ret);
 }
 
-void	compute_illumination(t_data *data, t_color *color, t_vec3 *hit_point, t_vec3 *normal)
+void	compute_illumination(t_data *data, t_color *color,
+	t_vec3 *hit_point, t_vec3 *normal)
 {
 	t_vec3	point_to_light_dir;
 	double	theta;
@@ -256,7 +259,8 @@ void	compute_illumination(t_data *data, t_color *color, t_vec3 *hit_point, t_vec
 	point_to_light_dir = v_substract(&data->light->origin, hit_point);
 	point_to_light_dir = v_normalize(&point_to_light_dir);
 	theta = acos(v_dot(normal, &point_to_light_dir));
-	if (theta >= M_PI / 2.){
+	if (theta >= M_PI / 2.)
+	{
 		*color = (t_color){0, 0, 0};
 		intensity = 0;
 	}
@@ -270,7 +274,8 @@ void	compute_illumination(t_data *data, t_color *color, t_vec3 *hit_point, t_vec
 	}
 }
 
-void	color_mix(t_color *color, t_color *ambient, t_color *light, double ratio)
+void	color_mix(t_color *color, t_color *ambient,
+	t_color *light, double ratio)
 {
 	color->r = ambient->r * (1 - ratio) + light->r * ratio;
 	if (color->r > 255)
@@ -297,7 +302,8 @@ void	color_mix(t_color *color, t_color *ambient, t_color *light, double ratio)
 // 		color_multiply(s->color, 0.5 * intensity);
 // }
 
-t_shade_info	fill_shade_info(t_color *color, t_vec3 *hit_point, t_vec3 *surface_normal, t_vec3 *point_to_light_dir)
+t_shade_info	fill_shade_info(t_color *color, t_vec3 *hit_point,
+	t_vec3 *surface_normal, t_vec3 *point_to_light_dir)
 {
 	t_shade_info	shade_info;
 
@@ -313,19 +319,20 @@ void	render(t_data *data)
 	t_ray			ray;
 	const t_obj		*hitted_obj;
 	double			t;
-
-	t_color			color, color1, color2;
+	t_color			color;
+	t_color			color1;
+	t_color			color2;
 	t_vec3			mapped_coords;
-
-	t_vec3			hit_point = {0, 0, 0};
-	t_vec3			surface_normal = {0, 0, 0};
-	t_vec3			point_to_light_dir = {0, 0, 0};
-
+	t_vec3			hit_point;
+	t_vec3			surface_normal;
+	t_vec3			point_to_light_dir;
 	t_shade_info	shade_info;
-
 	int				pix_y;
 	int				pix_x;
 
+	hit_point = (t_vec3){0, 0, 0};
+	surface_normal = (t_vec3){0, 0, 0};
+	point_to_light_dir = (t_vec3){0, 0, 0};
 	ray.origin = data->cam->origin;
 	pix_x = data->screen->x_pix_min - 1;
 	while (++pix_x < data->screen->x_pix_max)
@@ -342,26 +349,26 @@ void	render(t_data *data)
 			if (hitted_obj)
 			{
 				color = hitted_obj->f_get_color(hitted_obj);
-				color1 = color_multiply(&color, data->ambient_light->brightness);
-
-				point_to_light_dir = v_substract(&hit_point, &data->light->origin);
+				color1 = color_multiply(&color,
+						data->ambient_light->brightness);
+				point_to_light_dir = v_substract(&hit_point,
+						&data->light->origin);
 				point_to_light_dir = v_normalize(&point_to_light_dir);
-				surface_normal = hitted_obj->f_get_normal(hitted_obj, &hit_point);
-				
-				shade_info = fill_shade_info(&color, &hit_point, &surface_normal, &point_to_light_dir);
-
-color2 = color;
-compute_illumination(data, &color2, &hit_point, &surface_normal);
-
-				if(any_obj_between_light_and_hit_point(data, &hit_point, &data->light->origin, t))
-					color2 = (t_color){0,0,0};
-				
-color_mix(&color, &color1, &color2, COLOR_MIX_RATIO);
-
+				surface_normal = hitted_obj->f_get_normal(hitted_obj,
+						&hit_point);
+				shade_info = fill_shade_info(&color, &hit_point,
+						&surface_normal, &point_to_light_dir);
+				color2 = color;
+				compute_illumination(data, &color2,
+					&hit_point, &surface_normal);
+				if (any_obj_between_light_and_hit_point(data,
+						&hit_point, &data->light->origin, t))
+					color2 = (t_color){0, 0, 0};
+				color_mix(&color, &color1, &color2, COLOR_MIX_RATIO);
 			}
 			else
 				color = (t_color){0, 0, 0};
-			my_mlx_pixel_put( data->mlx, pix_x, pix_y, rgb_to_int(&color));
+			my_mlx_pixel_put(data->mlx, pix_x, pix_y, rgb_to_int(&color));
 		}
 	}
 }
@@ -373,13 +380,15 @@ void	new_mlx(t_data *d)
 	d->mlx->mlx_p = mlx_init();
 	if (!d->mlx->mlx_p)
 		free_exit(d);
-	d->mlx->win_p = mlx_new_window( d->mlx->mlx_p, WIDTH, HEIGHT, "tnoyan's team" );
+	d->mlx->win_p = mlx_new_window(d->mlx->mlx_p, WIDTH,
+			HEIGHT, "tnoyan's team");
 	if (!d->mlx->win_p)
 		free_exit(d);
-	d->mlx->img_p = mlx_new_image( d->mlx->mlx_p, WIDTH, HEIGHT );
+	d->mlx->img_p = mlx_new_image(d->mlx->mlx_p, WIDTH, HEIGHT);
 	if (!d->mlx->img_p)
 		free_exit(d);
-	d->mlx->addr = mlx_get_data_addr( d->mlx->img_p, &d->mlx->bpp, &d->mlx->line_len, &d->mlx->endian );
+	d->mlx->addr = mlx_get_data_addr(d->mlx->img_p,
+			&d->mlx->bpp, &d->mlx->line_len, &d->mlx->endian);
 	if (!d->mlx->addr)
 		free_exit(d);
 }
@@ -391,7 +400,8 @@ void	init_viewport(t_data *d)
 	d->cam->dir = v_normalize(&d->cam->dir);
 	d->screen->focal_length = 1.0 / tan((d->cam->fov / 2) * (M_PI / 180));
 	d->screen->aspect_ratio = (double)ASPECT_RATIO_X / (double)ASPECT_RATIO_Y;
-	d->screen->x_pix_min = ((double)WIDTH - (HEIGHT * d->screen->aspect_ratio)) / 2;
+	d->screen->x_pix_min = ((double)WIDTH
+			- (HEIGHT * d->screen->aspect_ratio)) / 2;
 	d->screen->x_pix_max = (double)WIDTH - d->screen->x_pix_min;
 	d->screen->forward = v_multiply(&d->cam->dir, -d->screen->focal_length);
 	d->screen->origin = v_substract(&d->cam->origin, &d->screen->forward);

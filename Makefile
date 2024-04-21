@@ -20,6 +20,7 @@ SRCS	=	$(SRC_DIR)/intersections.c \
 			$(SRC_DIR)/parse/get_next_line_utils.c \
 			$(SRC_DIR)/render_utils.c \
 			$(SRC_DIR)/test.c \
+			$(SRC_DIR)/vector2.c \
 			$(SRC_DIR)/vector.c \
 			$(SRC_DIR)/intersections_cy.c \
 
