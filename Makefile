@@ -18,9 +18,10 @@ SRCS	=	$(SRC_DIR)/intersections.c \
 			$(SRC_DIR)/parse/ft_atod.c\
 			$(SRC_DIR)/parse/get_next_line.c \
 			$(SRC_DIR)/parse/get_next_line_utils.c \
-			$(SRC_DIR)/test_mlx.c \
+			$(SRC_DIR)/render_utils.c \
 			$(SRC_DIR)/test.c \
 			$(SRC_DIR)/vector.c \
+			$(SRC_DIR)/intersections_cy.c \
 
 OBJ_DIR	=	obj
 OBJS	=	$(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

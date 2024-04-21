@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 00:52:24 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 14:17:13 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/21 14:58:30 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	init_cy(t_data *data, char *line, int index)
 		return (free_2d(ptr), printf("Error!\nWrong Definition\n"), 0);
 	if (!ft_assign_color(ft_split(ptr[5], ','), &new->color))
 		return (free_2d(ptr), printf("Error!\nWrong Definition\n"), 0);
-	new->r = ft_atod(ptr[3]);
+	new->r = ft_atod(ptr[3]) / 2;
 	new->height = ft_atod(ptr[4]);
 	if (new->r <= 0 || new->height <= 0)
 		return (free_2d(ptr), printf("Error!\nWrong Definition\n"), 0);

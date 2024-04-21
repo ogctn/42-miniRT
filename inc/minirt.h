@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:36:36 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 14:14:32 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/21 19:45:26 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,38 @@
 # define WIDTH 2000
 # define HEIGHT 1200
 # define ASPECT_RATIO_X 4
-# define ASPECT_RATIO_Y 3
+# define ASPECT_RATIO_Y 4
 
 # define COLOR_MIX_RATIO 0.55
 
+typedef struct s_cy_val
+{
+	double	x1;
+	double	x2;
+	double	x3;
+	int		x1_flag;
+	int		x2_flag;
+	int		x3_flag;
+}	t_cy_val;
+
+typedef struct s_cy_mtrc
+{
+	double	a;
+	double	b;
+	double	c;
+	double	d;
+}	t_cy_mtrc;
+
+typedef struct s_cy_vec
+{
+	t_vec3		p1;
+	t_vec3		p2;
+	t_vec3		va;
+	t_vec3		oc;
+	t_cy_val	values;
+	t_cy_mtrc	metrics;
+
+}	t_cy_vec;
 
 typedef struct s_mlx
 {
@@ -192,11 +220,15 @@ void	set_stuffs(t_data *d);
 void	main_loop(t_data *d);
 void	new_mlx(t_data *d);
 
-
 double	intersects_sphere(const t_ray *ray, const t_sphere *sp);
 double	f_intersects(const t_ray *ray, const t_obj *obj);
 t_color	f_get_color(const t_obj *obj);
 t_vec3	f_get_normal(const t_obj *obj, t_vec3 *hit_point);
 
+void	assign_cy_vectors(const t_ray *ray, const t_cylinder *cy, t_cy_vec *d);
+void	find_x1(const t_ray *ray, const t_cylinder *cy, t_cy_vec *data);
+void	find_x2_x3(const t_ray *ray, const t_cylinder *cy, t_cy_vec *data);
+double	find_min_2(double a, double b);
+double	find_min_3(double a, double b, double c);
 
 #endif
