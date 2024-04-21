@@ -1,6 +1,6 @@
 NAME	=	miniRT
 CC		=	gcc
-FLAGS	=	-Wall -Wextra -Werror
+FLAGS	=	#-Wall -Wextra -Werror
 RM		=	rm -rf
 LIBFT	=	lib/libft/libft.a
 MLX		=	lib/mlx/libmlx.a

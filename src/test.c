@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/21 14:19:06 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 14:36:08 by sgundogd         ###   ########.fr       */
+/*   Created: 2024/04/22 01:00:55 by ogcetin           #+#    #+#             */
+/*   Updated: 2024/04/22 01:00:57 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,22 +127,23 @@ int rgb_to_int(const t_color *rgb)
 	return (r << 16 | g << 8 | b);
 }
 
-void	pixel_to_virtual(t_screen *s, int *x, int *y, t_vec3 *iter_coords)
+void	pixel_to_virtual(t_data *d, int *x, int *y, t_vec3 *mapped_coords)
 {
-	iter_coords->x = ((2 / (s->x_pix_max - s->x_pix_min)) * (*x + 0.5)) - ((2 * s->x_pix_min / (s->x_pix_max - s->x_pix_min)) + 1);
-	iter_coords->y = ((-2.0 / HEIGHT) * (*y + 0.5)) + 1;
-	iter_coords->z = s->focal_length;
+	t_vec3	tmp1;
+	t_vec3	tmp2;
+	t_vec3	tmp3;
+	double	ndc_x;
+	double	ndc_y;
+	
+	ndc_x = ((2 / (d->screen->x_pix_max - d->screen->x_pix_min)) * (*x + 0.5)) - ((2 * d->screen->x_pix_min / (d->screen->x_pix_max - d->screen->x_pix_min)) + 1);
+	ndc_y = ((-2.0 / HEIGHT) * (*y + 0.5)) + 1;
+	
+	tmp1 = v_multiply(&d->screen->right, ndc_x);
+	tmp2 = v_multiply(&d->screen->up, ndc_y);
+	tmp3 = v_add(&tmp1, &tmp2);
+	*mapped_coords = v_add(&d->cam->dir, &tmp3);
 
-	//t_vec3 tmp1;
-	//t_vec3 tmp2;
-	//printf("r.x:%f r.y:%f r.z:%f\n", s->right.x, s->right.y, s->right.z);
-	//printf("up.x:%f up.y:%f up.z:%f\n", s->up.x, s->up.y, s->up.z);
-	//printf("forward.x:%f forward.y:%f forward.z:%f\n", s->forward.x, s->forward.y, s->forward.z);getchar();
-	// tmp1 = v_multiply(&s->right, iter_coords->x);
-	// tmp2 = v_multiply(&s->up, iter_coords->y);
-	// *iter_coords = v_substract(&tmp1, &tmp2);
-	// *iter_coords = v_substract(&s->forward, iter_coords);
-	// *iter_coords = v_normalize(iter_coords);
+	
 }
 
 t_vec3 f_get_normal_sphere(const t_obj *obj, t_vec3 *hit_point)
@@ -341,7 +342,7 @@ void render(t_data *data)
 		{
 			t = INF;
 
-			pixel_to_virtual(data->screen, &pix_x, &pix_y, &mapped_coords);
+			pixel_to_virtual(data, &pix_x, &pix_y, &mapped_coords);
 
 			ray.dir = v_normalize(&mapped_coords);
 
@@ -400,7 +401,14 @@ void	new_mlx(t_data *d) {
 		free_exit(d);
 }
 
-void	init_viewport(t_data *d) {
+void	init_viewport(t_data *d)
+{
+	if (!d->screen)
+		free_exit(d);
+	d->screen->focal_length = 1 / tan((d->cam->fov / 2) * (M_PI / 180));
+	d->screen->aspect_ratio = (double)ASPECT_RATIO_X / (double)ASPECT_RATIO_Y;
+	d->screen->x_pix_min = ((double)WIDTH - (HEIGHT * d->screen->aspect_ratio)) / 2;
+	d->screen->x_pix_max = (double)WIDTH - d->screen->x_pix_min;
 	d->screen->forward = v_multiply(&d->cam->dir, -d->screen->focal_length);
 	d->screen->origin = v_substract(&d->cam->origin, &d->screen->forward);
 	d->screen->forward = v_normalize(&d->screen->forward);
@@ -411,20 +419,8 @@ void	init_viewport(t_data *d) {
 	d->screen->up = v_normalize(&d->screen->up);
 }
 
-void	init_screen(t_data *d) {
-	if (!d->screen)
-		free_exit(d);
-	d->screen->aspect_ratio = (double)ASPECT_RATIO_X / (double)ASPECT_RATIO_Y;
-	d->screen->focal_length = 1 / tan((d->cam->fov / 2) * (M_PI / 180));
-	d->screen->x_pix_min = ((double)WIDTH - (HEIGHT * d->screen->aspect_ratio)) / 2;
-	d->screen->x_pix_max = (double)WIDTH - d->screen->x_pix_min;
-	// https://stackoverflow.com/questions/14607640/rotating-a-vector-in-3d-space
-}
-
-
-void	main_loop(t_data *d) {
-
-	init_screen(d);
+void	main_loop(t_data *d)
+{
 	init_viewport(d);
 
 	render(d);

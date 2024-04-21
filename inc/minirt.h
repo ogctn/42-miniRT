@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/22 14:36:36 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 19:45:26 by sgundogd         ###   ########.fr       */
+/*   Created: 2024/04/22 01:00:44 by ogcetin           #+#    #+#             */
+/*   Updated: 2024/04/22 01:00:46 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@
 # define INF INFINITY
 # define SHIFT_VAL 2
 
-# define WIDTH 2000
-# define HEIGHT 1200
+# define WIDTH 400
+# define HEIGHT 400
 # define ASPECT_RATIO_X 4
 # define ASPECT_RATIO_Y 4
 
