@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:36:36 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/05 09:37:12 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/21 14:04:09 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@
 # define INF INFINITY
 # define SHIFT_VAL 2
 
-# define WIDTH 1200
-# define HEIGHT WIDTH
-# define ASPECT_RATIO_X 16
-# define ASPECT_RATIO_Y 9
+# define WIDTH 2000
+# define HEIGHT 1200
+# define ASPECT_RATIO_X 4
+# define ASPECT_RATIO_Y 3
 
 # define COLOR_MIX_RATIO 0.55
 
@@ -133,10 +133,11 @@ typedef struct t_screen
 	t_vec3	up;
 	t_vec3	right;
 	t_vec3	forward;
+	t_vec3	origin;
 	double	focal_length;
 	double	aspect_ratio;
-	double	y_pix_min;
-	double	y_pix_max;
+	double	x_pix_min;
+	double	x_pix_max;
 
 }	t_screen;
 

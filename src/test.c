@@ -108,9 +108,20 @@ int rgb_to_int(const t_color *rgb)
 
 void	pixel_to_virtual(t_screen *s, int *x, int *y, t_vec3 *iter_coords)
 {
-	iter_coords->x = -1 + (2 * (*x + 0.5) / WIDTH) ;
-	iter_coords->y = 1 - 2.0 * ((*y + 0.5 - s->y_pix_min) / HEIGHT);
+	iter_coords->x = ((2 / (s->x_pix_max - s->x_pix_min)) * (*x + 0.5)) - ((2 * s->x_pix_min / (s->x_pix_max - s->x_pix_min)) + 1);
+	iter_coords->y = ((-2.0 / HEIGHT) * (*y + 0.5)) + 1;
 	iter_coords->z = s->focal_length;
+
+	//t_vec3 tmp1;
+	//t_vec3 tmp2;
+	//printf("r.x:%f r.y:%f r.z:%f\n", s->right.x, s->right.y, s->right.z);
+	//printf("up.x:%f up.y:%f up.z:%f\n", s->up.x, s->up.y, s->up.z);
+	//printf("forward.x:%f forward.y:%f forward.z:%f\n", s->forward.x, s->forward.y, s->forward.z);getchar();
+	// tmp1 = v_multiply(&s->right, iter_coords->x);
+	// tmp2 = v_multiply(&s->up, iter_coords->y);
+	// *iter_coords = v_substract(&tmp1, &tmp2);
+	// *iter_coords = v_substract(&s->forward, iter_coords);
+	// *iter_coords = v_normalize(iter_coords);
 }
 
 t_vec3 f_get_normal_sphere(const t_obj *obj, t_vec3 *hit_point)
@@ -296,17 +307,16 @@ void render(t_data *data)
 
 	t_shade_info shade_info;
 
-	int pix_vertical_margin = (double)HEIGHT * (1 - (1 / data->screen->aspect_ratio)) / 2;
+	//int horizontal_margin = (double)WIDTH * (1 - (1 / data->screen->aspect_ratio)) / 2;
 
 	int pix_y;
 	int pix_x;
 
-
-	pix_y = pix_vertical_margin - 1;
-	while (++pix_y < data->screen->y_pix_max)
+	pix_x = data->screen->x_pix_min - 1;
+	while (++pix_x < data->screen->x_pix_max)
 	{
-		pix_x = -1;
-		while (++pix_x < WIDTH)
+		pix_y = -1;
+		while (++pix_y < HEIGHT)
 		{
 			t = INF;
 
@@ -344,13 +354,11 @@ color_mix(&color, &color1, &color2, COLOR_MIX_RATIO);
 			else
 				color = (t_color){118, 118, 118};
 			
-
 			my_mlx_pixel_put( data->mlx, pix_x, pix_y, rgb_to_int(&color) );
 
-			pix_x++;
 		}
-		pix_y++;
 	}
+	//printf("x: %d  mapped x: %f, y: %d  mapped y:%f\n", pix_x, mapped_coords.x, pix_y, mapped_coords.y);
 
 }
 
@@ -360,10 +368,10 @@ void	new_mlx(t_data *d) {
 	d->mlx->mlx_p = mlx_init();
 	if (!d->mlx->mlx_p)
 		free_exit(d);
-	d->mlx->win_p = mlx_new_window( d->mlx->mlx_p, WIDTH, WIDTH, "tnoyan's team" );
+	d->mlx->win_p = mlx_new_window( d->mlx->mlx_p, WIDTH, HEIGHT, "tnoyan's team" );
 	if (!d->mlx->win_p)
 		free_exit(d);
-	d->mlx->img_p = mlx_new_image( d->mlx->mlx_p, WIDTH, WIDTH );
+	d->mlx->img_p = mlx_new_image( d->mlx->mlx_p, WIDTH, HEIGHT );
 	if (!d->mlx->img_p)
 		free_exit(d);
 	d->mlx->addr = mlx_get_data_addr( d->mlx->img_p, &d->mlx->bpp, &d->mlx->line_len, &d->mlx->endian );
@@ -371,12 +379,15 @@ void	new_mlx(t_data *d) {
 		free_exit(d);
 }
 
-void	init_camera_up_right(t_data *d) {
+void	init_viewport(t_data *d) {
+	d->screen->forward = v_multiply(&d->cam->dir, -d->screen->focal_length);
+	d->screen->origin = v_substract(&d->cam->origin, &d->screen->forward);
+	d->screen->forward = v_normalize(&d->screen->forward);
 	d->screen->up = (t_vec3){0, 1, 0};
-	d->screen->right = v_cross(&d->cam->dir, &d->screen->up);
-	d->screen->up = v_cross(&d->screen->right, &d->cam->dir);
-	d->screen->up = v_normalize(&d->screen->up);
+	d->screen->right = v_cross(&d->screen->forward, &d->screen->up);
 	d->screen->right = v_normalize(&d->screen->right);
+	d->screen->up = v_cross(&d->screen->right, &d->screen->forward);
+	d->screen->up = v_normalize(&d->screen->up);
 }
 
 void	init_screen(t_data *d) {
@@ -384,22 +395,16 @@ void	init_screen(t_data *d) {
 		free_exit(d);
 	d->screen->aspect_ratio = (double)ASPECT_RATIO_X / (double)ASPECT_RATIO_Y;
 	d->screen->focal_length = 1 / tan((d->cam->fov / 2) * (M_PI / 180));
-	d->screen->y_pix_min = ((double)HEIGHT - (WIDTH / d->screen->aspect_ratio)) / 2;
-	d->screen->y_pix_max = (WIDTH / d->screen->aspect_ratio) + d->screen->y_pix_min;
-	d->screen->forward = v_substract(&d->cam->dir, &d->cam->origin);
-	d->screen->forward = v_normalize(&d->screen->forward);
+	d->screen->x_pix_min = ((double)WIDTH - (HEIGHT * d->screen->aspect_ratio)) / 2;
+	d->screen->x_pix_max = (double)WIDTH - d->screen->x_pix_min;
 	// https://stackoverflow.com/questions/14607640/rotating-a-vector-in-3d-space
-	d->screen->up = (t_vec3){d->screen->forward.x, -d->screen->forward.z, d->screen->forward.y};
-	d->screen->up = v_normalize(&d->screen->up);
-	d->screen->right = v_cross(&d->screen->forward, &d->screen->up);
-	d->screen->right = v_normalize(&d->screen->right);
 }
 
 
 void	main_loop(t_data *d) {
 
 	init_screen(d);
-	init_camera_up_right(d);
+	init_viewport(d);
 
 	render( d );
 	mlx_put_image_to_window( d->mlx->mlx_p, d->mlx->win_p, d->mlx->img_p, 0, 0 );
