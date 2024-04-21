@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:44 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 01:00:46 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/22 01:24:00 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@
 # define INF INFINITY
 # define SHIFT_VAL 2
 
-# define WIDTH 400
-# define HEIGHT 400
+# define WIDTH 480
+# define HEIGHT 480
 # define ASPECT_RATIO_X 4
 # define ASPECT_RATIO_Y 4
 

@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:55 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 01:00:57 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/22 01:19:44 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -403,9 +403,10 @@ void	new_mlx(t_data *d) {
 
 void	init_viewport(t_data *d)
 {
-	if (!d->screen)
+	if (!d->screen || !d->cam)
 		free_exit(d);
-	d->screen->focal_length = 1 / tan((d->cam->fov / 2) * (M_PI / 180));
+	d->cam->dir = v_normalize(&d->cam->dir);
+	d->screen->focal_length = 1.0 / tan((d->cam->fov / 2) * (M_PI / 180));
 	d->screen->aspect_ratio = (double)ASPECT_RATIO_X / (double)ASPECT_RATIO_Y;
 	d->screen->x_pix_min = ((double)WIDTH - (HEIGHT * d->screen->aspect_ratio)) / 2;
 	d->screen->x_pix_max = (double)WIDTH - d->screen->x_pix_min;
