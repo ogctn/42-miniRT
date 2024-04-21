@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/21 14:19:06 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 14:26:03 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/21 14:36:08 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 void	mlx_stuffs(t_data *a);
 void	my_mlx_pixel_put(t_mlx *a, int b, int c, int d);
 void	render_background( t_mlx *a, int b);
-
 
 void	free_objects( t_data *genel)
 {
@@ -87,20 +86,20 @@ int	handle_key(int keycode, t_data *d)
 		free_exit(d);
 	cam_move(d, keycode);
 	render(d);
-
 	mlx_put_image_to_window(d->mlx->mlx_p, d->mlx->win_p, d->mlx->img_p, 0, 0);
 	return (0);
 }
 
 const t_obj	*find_first_obj(t_data *data, const t_ray *ray, double *t)
 {
-	const t_obj *ret = NULL;
-	const t_obj *obj;
-	double distance;
-	double min_distance;
-	int i;
+	const t_obj	*ret = NULL;
+	const t_obj	*obj;
+	double		distance;
+	double		min_distance;
+	int			i;
 
 	i = -1;
+	ret = NULL;
 	min_distance = INF;
 	while (++i < data->obj_count)
 	{
@@ -118,9 +117,9 @@ const t_obj	*find_first_obj(t_data *data, const t_ray *ray, double *t)
 
 int rgb_to_int(const t_color *rgb)
 {
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
+	unsigned char	r;
+	unsigned char	g;
+	unsigned char	b;
 
 	r = (unsigned char)rgb->r;
 	g = (unsigned char)rgb->g;
@@ -428,18 +427,14 @@ void	main_loop(t_data *d) {
 	init_screen(d);
 	init_viewport(d);
 
-	render( d );
-	mlx_put_image_to_window( d->mlx->mlx_p, d->mlx->win_p, d->mlx->img_p, 0, 0 );
+	render(d);
+	mlx_put_image_to_window(d->mlx->mlx_p, d->mlx->win_p, d->mlx->img_p, 0, 0);
 
-	mlx_hook( d->mlx->win_p, 17, 1, &free_exit, d);
-	mlx_hook( d->mlx->win_p, EVENT_KEY_PRESS, 1, &handle_key, d );
-	mlx_loop( d->mlx->mlx_p );
+	mlx_hook(d->mlx->win_p, 17, 1, &free_exit, d);
+	mlx_hook(d->mlx->win_p, EVENT_KEY_PRESS, 1, &handle_key, d);
+	mlx_loop(d->mlx->mlx_p);
 
 }
-
-
-
-
 // void __attribute__((destructor)) a(){
 // 	system("leaks test.out");
 // }
