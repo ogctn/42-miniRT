@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 14:32:43 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 23:06:18 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/22 01:45:32 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,4 @@ int	main(int ac, char **av)
 }
 
 // Camera direction and rotation will be implemented. [ test.c: pixel_to_virtual() ]
-//light in cylinder
 // Fix cam_move function 

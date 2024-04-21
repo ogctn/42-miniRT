@@ -41,18 +41,18 @@ $(OBJ_DIR)/%.o	:	$(SRC_DIR)/%.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(MLX):
-	make -C lib/mlx/
+#	make -C lib/mlx/
 $(LIBFT):
 	make -C lib/libft/
 
 clean:
-	make clean -C lib/mlx/
+#	make clean -C lib/mlx/
 	make clean -C lib/libft/
 	${RM} $(OBJ_DIR)
 
 fclean: clean
 	${RM} ${NAME}
-	${RM} $(MLX)
+#	${RM} $(MLX)
 	${RM} $(LIBFT)
 
 re:			fclean all
