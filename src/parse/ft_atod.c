@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 15:10:11 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/28 20:06:11 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 01:08:36 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	control_atod(const char *str)
 	while (str[i])
 	{
 		if ((str[i] < '0' || str[i] > '9') && str[i] != '.' && str[i] != '-'
-			&& str[i] != '+' && str[i] != '\n' && str[i] != '\t')
+			&& str[i] != '+' && str[i] != '\n' && str[i] != ' ')
 			return (0);
 		else if (str[i] == '.')
 		{
@@ -72,7 +72,7 @@ double	ft_atod(const char *str)
 	int		sign;
 
 	sign = 1;
-	while (*str == ' ' || *str == '\t')
+	while (*str == ' ')
 		str++;
 	if (!control_atod(str))
 		return (INFINITY);

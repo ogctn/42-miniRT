@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:05:35 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/28 19:44:38 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 01:08:07 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	control_elements(t_data *data)
 		exit(1);
 	}
 	if (data->cam->fov < 0.0
-		|| data->light->brightness > 180.0)
+		|| data->cam->fov > 180.0)
 	{
 		printf("Error!\nWrong Definiton\n");
 		exit(1);
@@ -52,7 +52,13 @@ int	control_extension(char *str)
 	int	i;
 
 	i = 0;
+	if (str[i] == '.')
+		return (1);
 	while (str[i])
+	{
+		if (str[i] == '/' && str[i + 1] && str[i + 1] == '.')
+			return (1);
 		i++;
+	}
 	return (ft_strcmp(ft_substr(str, i - 3, 3), ".rt"));
 }

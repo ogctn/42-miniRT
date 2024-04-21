@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:17:41 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/02/28 19:40:00 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 01:07:05 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ int	ft_assign_color(char **ptr, t_color *clr)
 {
 	if (size_2d(ptr) != 3)
 		return (free_2d(ptr), 0);
-	clr->r = ft_atoi(ptr[0]);
-	clr->g = ft_atoi(ptr[1]);
-	clr->b = ft_atoi(ptr[2]);
+	clr->r = ft_atod(ptr[0]);
+	clr->g = ft_atod(ptr[1]);
+	clr->b = ft_atod(ptr[2]);
 	if (control_rgb(*clr) == 0)
 		return (free_2d(ptr), 0);
 	free_2d(ptr);

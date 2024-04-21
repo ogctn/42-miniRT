@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:47:32 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/02/26 10:10:57 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/22 01:06:36 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ t_vec3	v_substract(const t_vec3 *u, const t_vec3 *v)
 {
 	return ((t_vec3){u->x - v->x, u->y - v->y, u->z - v->z});
 }
+
 t_vec3	v_multiply(const t_vec3 *u, double s)
 {
 	if (s == INFINITY)
@@ -40,7 +41,7 @@ t_vec3	v_cross(const t_vec3 *u, const t_vec3 *v)
 
 double	v_length(const t_vec3 *u)
 {
-	return(sqrtf(u->x * u->x + u->y * u->y + u->z * u->z));
+	return (sqrtf(u->x * u->x + u->y * u->y + u->z * u->z));
 }
 
 t_vec3	v_normalize(const t_vec3 *u)

@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 23:20:08 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/21 19:39:18 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 01:04:53 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ double	intersects_cylinder(const t_ray *ray, const t_cylinder *cy)
 	if (data.values.x1_flag == 0
 		&& data.values.x2_flag == 0 && data.values.x3_flag == 0)
 		return (INF);
-	else if (data.values.x2_flag == 0 && data.values.x3_flag == 0 )
+	else if (data.values.x2_flag == 0 && data.values.x3_flag == 0)
 		return (data.values.x1);
 	else if (data.values.x1_flag == 0 && data.values.x2_flag == 0)
 		return (data.values.x3);
