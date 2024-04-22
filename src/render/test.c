@@ -6,11 +6,11 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:55 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 02:44:52 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 03:04:27 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minirt.h"
+#include "../../inc/minirt.h"
 #include <stdio.h>
 
 void	mlx_stuffs(t_data *a);
@@ -18,41 +18,6 @@ void	my_mlx_pixel_put(t_mlx *a, int b, int c, int d);
 void	render_background( t_mlx *a, int b);
 void	render(t_data *data);
 int		rgb_to_int(const t_color *rgb);
-
-void	free_objects(t_data *genel)
-{
-	int	i;
-
-	i = -1;
-	while (++i < (int) genel->obj_count)
-	{
-		if (genel->obj_set[i].obj)
-			free(genel->obj_set[i].obj);
-	}
-	if (genel->obj_set)
-		free(genel->obj_set);
-}
-
-int	free_exit(t_data *genel)
-{
-	if (genel)
-	{
-		if (genel->mlx->img_p)
-		{
-			mlx_destroy_image(genel->mlx->mlx_p, genel->mlx->img_p);
-			if (genel->mlx->win_p)
-				mlx_destroy_window(genel->mlx->mlx_p, genel->mlx->win_p);
-		}
-		free_objects(genel);
-		if (genel->cam)
-			free(genel->cam);
-		if (genel->screen)
-			free(genel->screen);
-		if (genel->mlx)
-			free(genel->mlx);
-	}
-	exit (0);
-}
 
 void	reset_camera(t_data *genel)
 {
@@ -79,16 +44,6 @@ void	cam_move(t_data *genel, int keycode)
 		reset_camera(genel);
 }
 
-int	handle_key(int keycode, t_data *d)
-{
-	if (keycode == KEY_ESC)
-		free_exit(d);
-	cam_move(d, keycode);
-	render(d);
-	mlx_put_image_to_window(d->mlx->mlx_p, d->mlx->win_p, d->mlx->img_p, 0, 0);
-	return (0);
-}
-
 const t_obj	*find_first_obj(t_data *data, const t_ray *ray, double *t)
 {
 	const t_obj	*ret = NULL;
@@ -113,18 +68,6 @@ const t_obj	*find_first_obj(t_data *data, const t_ray *ray, double *t)
 	return (ret);
 }
 
-int	rgb_to_int(const t_color *rgb)
-{
-	unsigned char	r;
-	unsigned char	g;
-	unsigned char	b;
-
-	r = (unsigned char)rgb->r;
-	g = (unsigned char)rgb->g;
-	b = (unsigned char)rgb->b;
-	return (r << 16 | g << 8 | b);
-}
-
 void	pixel_to_virtual(t_data *d, int *x, int *y, t_vec3 *mapped_coords)
 {
 	t_vec3	tmp1;
@@ -140,59 +83,6 @@ void	pixel_to_virtual(t_data *d, int *x, int *y, t_vec3 *mapped_coords)
 	tmp2 = v_multiply(&d->screen->up, ndc_y);
 	tmp1 = v_add(&tmp1, &tmp2);
 	*mapped_coords = v_add(&d->cam->dir, &tmp1);
-}
-
-t_vec3	f_get_normal_sphere(const t_obj *obj, t_vec3 *hit_point)
-{
-	t_sphere	*sp;
-	t_vec3		normal;
-
-	sp = obj->obj;
-	normal = v_substract(hit_point, &sp->center);
-	normal = v_normalize(&normal);
-	return (normal);
-}
-
-t_vec3	f_get_normal_plane(const t_obj *obj, t_vec3 *hit_point)
-{
-	t_plane	*pl;
-	t_vec3	normal;
-
-	(void)hit_point;
-	pl = (t_plane *)obj->obj;
-	normal = pl->normal;
-	normal = v_normalize(&normal);
-	return (normal);
-}
-
-t_vec3	f_get_normal_cylinder(const t_obj *obj, t_vec3 *hit_point)
-{
-	t_cylinder	*cyl;
-	t_vec3		normal;
-	t_vec3		oc;
-	t_vec3		tmp2;
-
-	cyl = (t_cylinder *)obj->obj;
-	oc = v_substract(hit_point, &cyl->origin);
-	tmp2 = v_multiply(&cyl->dir, v_dot(&oc, &cyl->dir));
-	normal = v_substract(&oc, &tmp2);
-	normal = v_normalize(&normal);
-	return (normal);
-}
-
-t_vec3	f_get_normal(const t_obj *obj, t_vec3 *hit_point)
-{
-	t_vec3	normal;
-
-	if (obj->type == SPHERE)
-		normal = f_get_normal_sphere(obj, hit_point);
-	else if (obj->type == PLANE)
-		normal = f_get_normal_plane(obj, hit_point);
-	else if (obj->type == CYLINDER)
-		normal = f_get_normal_cylinder(obj, hit_point);
-	else
-		normal = (t_vec3){0, 0, 0};
-	return (normal);
 }
 
 bool	any_obj_between_light_and_hit_point(t_data *data,
@@ -217,76 +107,6 @@ bool	any_obj_between_light_and_hit_point(t_data *data,
 	return (false);
 }
 
-t_color	color_multiply(t_color *color, double factor)
-{
-	t_color	ret;
-
-	ret.r = color->r * factor;
-	if (ret.r > 255)
-		ret.r = 255;
-	ret.g = color->g * factor;
-	if (ret.g > 255)
-		ret.g = 255;
-	ret.b = color->b * factor;
-	if (ret.b > 255)
-		ret.b = 255;
-	return (ret);
-}
-
-t_color	color_add(t_color *color1, t_color *color2)
-{
-	t_color	ret;
-
-	ret.r = color1->r + color2->r;
-	if (ret.r > 255)
-		ret.r = 255;
-	ret.g = color1->g + color2->g;
-	if (ret.g > 255)
-		ret.g = 255;
-	ret.b = color1->b + color2->b;
-	if (ret.b > 255)
-		ret.b = 255;
-	return (ret);
-}
-
-void	compute_illumination(t_data *data, t_color *color,
-	t_vec3 *hit_point, t_vec3 *normal)
-{
-	t_vec3	point_to_light_dir;
-	double	theta;
-	double	intensity;
-
-	point_to_light_dir = v_substract(&data->light->origin, hit_point);
-	point_to_light_dir = v_normalize(&point_to_light_dir);
-	theta = acos(v_dot(normal, &point_to_light_dir));
-	if (theta >= M_PI / 2.)
-	{
-		*color = (t_color){0, 0, 0};
-		intensity = 0;
-	}
-	else
-		intensity = data->light->brightness * (1 - (theta / (M_PI / 2.)));
-	if (intensity > 0)
-	{
-		color->r = color->r * intensity;
-		color->g = color->g * intensity;
-		color->b = color->b * intensity;
-	}
-}
-
-void	color_mix(t_color *color, t_color *ambient,
-	t_color *light, double ratio)
-{
-	color->r = ambient->r * (1 - ratio) + light->r * ratio;
-	if (color->r > 255)
-		color->r = 255;
-	color->g = ambient->g * (1 - ratio) + light->g * ratio;
-	if (color->g > 255)
-		color->g = 255;
-	color->b = ambient->b * (1 - ratio) + light->b * ratio;
-	if (color->b > 255)
-		color->b = 255;
-}
 
 // void	compute_illumination(t_data *data, t_shade_info *s)
 // {
@@ -371,26 +191,6 @@ void	render(t_data *data)
 			my_mlx_pixel_put(data->mlx, pix_x, pix_y, rgb_to_int(&color));
 		}
 	}
-}
-
-void	new_mlx(t_data *d)
-{
-	if (!d->mlx)
-		free_exit(d);
-	d->mlx->mlx_p = mlx_init();
-	if (!d->mlx->mlx_p)
-		free_exit(d);
-	d->mlx->win_p = mlx_new_window(d->mlx->mlx_p, WIDTH,
-			HEIGHT, "tnoyan's team");
-	if (!d->mlx->win_p)
-		free_exit(d);
-	d->mlx->img_p = mlx_new_image(d->mlx->mlx_p, WIDTH, HEIGHT);
-	if (!d->mlx->img_p)
-		free_exit(d);
-	d->mlx->addr = mlx_get_data_addr(d->mlx->img_p,
-			&d->mlx->bpp, &d->mlx->line_len, &d->mlx->endian);
-	if (!d->mlx->addr)
-		free_exit(d);
 }
 
 void	init_viewport(t_data *d)

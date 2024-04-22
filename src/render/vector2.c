@@ -6,11 +6,11 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:20:40 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/22 02:31:08 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 02:49:51 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/vector.h"
+#include "../../inc/vector.h"
 
 double	v_length(const t_vec3 *u)
 {

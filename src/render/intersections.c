@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   intersections.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 23:20:08 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 01:45:45 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/22 02:49:42 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minirt.h"
+#include "../../inc/minirt.h"
 
 double	intersects_sphere(const t_ray *ray, const t_sphere *sp);
 double	intersects_plane(const t_ray *ray, const t_plane *pl);

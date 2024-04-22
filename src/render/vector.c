@@ -6,11 +6,11 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:47:32 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 02:28:34 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 02:49:48 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/vector.h"
+#include "../../inc/vector.h"
 
 t_vec3	v_add(const t_vec3 *u, const t_vec3 *v)
 {

@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:44 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 02:25:03 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 03:12:24 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,11 +218,14 @@ void	set_sphere(t_data *d, t_sphere *s, int i);
 void	set_stuffs(t_data *d);
 void	main_loop(t_data *d);
 void	new_mlx(t_data *d);
+int		handle_key(int keycode, t_data *d);
 
 double	intersects_sphere(const t_ray *ray, const t_sphere *sp);
 double	f_intersects(const t_ray *ray, const t_obj *obj);
 t_color	f_get_color(const t_obj *obj);
 t_vec3	f_get_normal(const t_obj *obj, t_vec3 *hit_point);
+void	render(t_data *data);
+void	cam_move(t_data *genel, int keycode);
 
 void	assign_cy_vectors(const t_ray *ray, const t_cylinder *cy, t_cy_vec *d);
 void	find_x1(const t_ray *ray, const t_cylinder *cy, t_cy_vec *data);
@@ -230,4 +233,12 @@ void	find_x2_x3(const t_ray *ray, const t_cylinder *cy, t_cy_vec *data);
 double	find_min_2(double a, double b);
 double	find_min_3(double a, double b, double c);
 
+void	free_objects(t_data *genel);
+int		free_exit(t_data *genel);
+
+t_color	color_multiply(t_color *color, double factor);
+void	compute_illumination(t_data *data, t_color *color,
+			t_vec3 *hit_point, t_vec3 *normal);
+void	color_mix(t_color *color, t_color *ambient,
+			t_color *light, double ratio);
 #endif

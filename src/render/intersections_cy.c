@@ -6,11 +6,11 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/21 18:41:56 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 19:42:11 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 02:49:39 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minirt.h"
+#include "../../inc/minirt.h"
 
 void	assign_cy_vectors(const t_ray *ray, const t_cylinder *cy, t_cy_vec *d)
 {
