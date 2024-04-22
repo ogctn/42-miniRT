@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:55 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 03:04:27 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 05:05:30 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,19 +140,18 @@ void	render(t_data *data)
 	const t_obj		*hitted_obj;
 	double			t;
 	t_color			color;
-	t_color			color1;
 	t_color			color2;
 	t_vec3			mapped_coords;
 	t_vec3			hit_point;
 	t_vec3			surface_normal;
-	t_vec3			point_to_light_dir;
+	t_vec3			light_to_hit_dir;
 	t_shade_info	shade_info;
 	int				pix_y;
 	int				pix_x;
 
 	hit_point = (t_vec3){0, 0, 0};
 	surface_normal = (t_vec3){0, 0, 0};
-	point_to_light_dir = (t_vec3){0, 0, 0};
+	light_to_hit_dir = (t_vec3){0, 0, 0};
 	ray.origin = data->cam->origin;
 	pix_x = data->screen->x_pix_min - 1;
 	while (++pix_x < data->screen->x_pix_max)
@@ -164,27 +163,22 @@ void	render(t_data *data)
 			pixel_to_virtual(data, &pix_x, &pix_y, &mapped_coords);
 			ray.dir = v_normalize(&mapped_coords);
 			hitted_obj = find_first_obj(data, &ray, &t);
-			hit_point = v_multiply(&ray.dir, t);
-			hit_point = v_add(&ray.origin, &hit_point);
 			if (hitted_obj)
 			{
+				hit_point = v_multiply(&ray.dir, t);
+				hit_point = v_add(&ray.origin, &hit_point);
 				color = hitted_obj->f_get_color(hitted_obj);
-				color1 = color_multiply(&color,
-						data->ambient_light->brightness);
-				point_to_light_dir = v_substract(&hit_point,
-						&data->light->origin);
-				point_to_light_dir = v_normalize(&point_to_light_dir);
-				surface_normal = hitted_obj->f_get_normal(hitted_obj,
-						&hit_point);
-				shade_info = fill_shade_info(&color, &hit_point,
-						&surface_normal, &point_to_light_dir);
+				light_to_hit_dir = v_substract(&hit_point, &data->light->origin);
+				light_to_hit_dir = v_normalize(&light_to_hit_dir);
+				surface_normal = hitted_obj->f_get_normal(hitted_obj, &hit_point);
+				
+				shade_info = fill_shade_info(&color, &hit_point, &surface_normal, &light_to_hit_dir);
 				color2 = color;
-				compute_illumination(data, &color2,
-					&hit_point, &surface_normal);
-				if (any_obj_between_light_and_hit_point(data,
-						&hit_point, &data->light->origin, t))
+				
+				compute_illumination(data, &color2, &hit_point, &surface_normal);
+				if (any_obj_between_light_and_hit_point(data, &hit_point, &data->light->origin, t))
 					color2 = (t_color){0, 0, 0};
-				color_mix(&color, &color1, &color2, COLOR_MIX_RATIO);
+				color_mix(&color, color_multiply(&color, data->ambient_light->brightness), color2);
 			}
 			else
 				color = (t_color){0, 0, 0};

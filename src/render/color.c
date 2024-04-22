@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   color.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 03:02:34 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/22 03:02:39 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 04:58:43 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,16 +69,18 @@ void	compute_illumination(t_data *data, t_color *color,
 	}
 }
 
-void	color_mix(t_color *color, t_color *ambient,
-	t_color *light, double ratio)
+void	color_mix(t_color *color, t_color ambient, t_color light)
 {
-	color->r = ambient->r * (1 - ratio) + light->r * ratio;
+	double	ratio;
+
+	ratio = COLOR_MIX_RATIO;
+	color->r = ambient.r * (1 - ratio) + light.r * ratio;
 	if (color->r > 255)
 		color->r = 255;
-	color->g = ambient->g * (1 - ratio) + light->g * ratio;
+	color->g = ambient.g * (1 - ratio) + light.g * ratio;
 	if (color->g > 255)
 		color->g = 255;
-	color->b = ambient->b * (1 - ratio) + light->b * ratio;
+	color->b = ambient.b * (1 - ratio) + light.b * ratio;
 	if (color->b > 255)
 		color->b = 255;
 }

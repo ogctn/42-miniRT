@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:44 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 03:12:24 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 05:13:45 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,6 +239,5 @@ int		free_exit(t_data *genel);
 t_color	color_multiply(t_color *color, double factor);
 void	compute_illumination(t_data *data, t_color *color,
 			t_vec3 *hit_point, t_vec3 *normal);
-void	color_mix(t_color *color, t_color *ambient,
-			t_color *light, double ratio);
+void	color_mix(t_color *color, t_color ambient, t_color light);
 #endif
