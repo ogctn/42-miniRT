@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:27:25 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 14:16:23 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/23 03:43:28 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,4 +101,7 @@ void	initialize(t_data *data, char *str)
 	init_elements(data);
 	close_fd(data);
 	control_elements(data);
+	data->default_cam->origin = data->cam->origin;
+	data->default_cam->dir = data->cam->dir;
+	data->default_cam->fov = data->cam->fov;
 }

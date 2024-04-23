@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:55 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 05:05:30 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/23 04:32:14 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,59 @@ void	my_mlx_pixel_put(t_mlx *a, int b, int c, int d);
 void	render_background( t_mlx *a, int b);
 void	render(t_data *data);
 int		rgb_to_int(const t_color *rgb);
+void	init_viewport(t_data *d);
 
-void	reset_camera(t_data *genel)
+
+void	reset_camera(t_data *d)
 {
-	genel->cam->origin = genel->default_cam->origin;
-	genel->cam->dir = genel->default_cam->dir;
-	genel->cam->fov = genel->default_cam->fov;
+	d->cam->origin = d->default_cam->origin;
+	d->cam->dir = d->default_cam->dir;
+	d->cam->fov = d->default_cam->fov;
 }
 
-void	cam_move(t_data *genel, int keycode)
+void	change_cam_dir(t_data *d, int keycode)
 {
-	if (keycode == KEY_D)
-		genel->cam->origin.x += SHIFT_VAL;
+	t_vec3	tmp;
+	double	d_theta;
+
+	if (keycode == KEY_UP || keycode == KEY_DOWN || keycode == KEY_LEFT || keycode == KEY_RIGHT)
+	{
+		tmp = (t_vec3){0, 0, 0};
+		d_theta = 0.1;
+		if (keycode == KEY_UP)
+			tmp = v_rotate(&d->cam->dir, &d->screen->right, -d_theta);
+		else if (keycode == KEY_DOWN)
+			tmp = v_rotate(&d->cam->dir, &d->screen->right, d_theta);
+		else if (keycode == KEY_LEFT)
+			tmp = v_rotate(&d->cam->dir, &d->screen->up, -d_theta);
+		else if (keycode == KEY_RIGHT)
+			tmp = v_rotate(&d->cam->dir, &d->screen->up, d_theta);
+		d->cam->dir = v_normalize(&tmp);
+		init_viewport(d);
+	}
+}
+
+void	cam_move(t_data *d, int keycode)
+{
+	t_vec3 tmp;
+	
+	tmp = (t_vec3){0, 0, 0};
+	if (keycode == KEY_R)
+		reset_camera(d);
+	else if (keycode == KEY_D)
+		tmp = v_multiply(&d->screen->right, SHIFT_VAL);
 	else if (keycode == KEY_A)
-		genel->cam->origin.x -= SHIFT_VAL;
-	else if (keycode == KEY_C)
-		genel->cam->origin.z += SHIFT_VAL;
-	else if (keycode == KEY_V)
-		genel->cam->origin.z -= SHIFT_VAL;
+		tmp = v_multiply(&d->screen->right, -SHIFT_VAL);
 	else if (keycode == KEY_W)
-		genel->cam->origin.y += SHIFT_VAL;
+		tmp = v_multiply(&d->cam->dir, SHIFT_VAL);
 	else if (keycode == KEY_S)
-		genel->cam->origin.y -= SHIFT_VAL;
-	else if (keycode == KEY_R)
-		reset_camera(genel);
+		tmp = v_multiply(&d->cam->dir, -SHIFT_VAL);
+	else if (keycode == KEY_C)
+		tmp = v_multiply(&d->screen->up, SHIFT_VAL);
+	else if (keycode == KEY_V)
+		tmp = v_multiply(&d->screen->up, -SHIFT_VAL);
+	d->cam->origin = v_add(&d->cam->origin, &tmp);
+	change_cam_dir(d, keycode);
 }
 
 const t_obj	*find_first_obj(t_data *data, const t_ray *ray, double *t)
@@ -85,73 +114,89 @@ void	pixel_to_virtual(t_data *d, int *x, int *y, t_vec3 *mapped_coords)
 	*mapped_coords = v_add(&d->cam->dir, &tmp1);
 }
 
-bool	any_obj_between_light_and_hit_point(t_data *data,
-	t_vec3 *hit_point, t_vec3 *point_to_light, double t)
+bool	in_shadow(t_data *data, t_shade_info *si)
 {
 	t_ray		ray;
-	const t_obj	*hitted_obj;
+	const t_obj	*target_obj;
 	double		t2;
 	int			i;
 
-	ray.origin = *hit_point;
-	ray.dir = v_substract(point_to_light, hit_point);
-	ray.dir = v_normalize(&ray.dir);
+	ray.origin = v_multiply(&si->point_to_light_dir, 0.001);
+	ray.origin = v_add(&si->hit_point, &ray.origin);
+	ray.dir = si->point_to_light_dir;
 	i = -1;
 	while (++i < data->obj_count)
 	{
-		hitted_obj = &data->obj_set[i];
-		t2 = hitted_obj->f_intersects(&ray, hitted_obj);
-		if (t2 >= 0 && t2 < t)
+		target_obj = &data->obj_set[i];
+		if (target_obj == si->obj)
+			continue ;
+		t2 = target_obj->f_intersects(&ray, target_obj);
+		if (t2 >= TOL && t2 < v_length(&si->point_to_light))
 			return (true);
 	}
 	return (false);
 }
 
-
-// void	compute_illumination(t_data *data, t_shade_info *s)
-// {
-// 	double theta;
-// 	double intensity;
-
-// 	theta = acos(v_dot(s->surface_normal, s->point_to_light_dir));
-// 	if (theta > M_PI / 2.)
-// 		intensity = 0;
-// 	else
-// 		intensity = data->light->brightness * (1 - (theta / (M_PI / 2.)));
-// 	if (intensity > 0)
-// 		color_multiply(s->color, 0.5 * intensity);
-// }
-
-t_shade_info	fill_shade_info(t_color *color, t_vec3 *hit_point,
-	t_vec3 *surface_normal, t_vec3 *point_to_light_dir)
+t_shade_info	fill_info(t_obj *obj, t_vec3 *hit_point, t_vec3 *light_origin, t_ray *ray)
 {
 	t_shade_info	shade_info;
+	t_vec3			p_to_l;
 
-	shade_info.color = color;
-	shade_info.hit_point = hit_point;
-	shade_info.surface_normal = surface_normal;
-	shade_info.point_to_light_dir = point_to_light_dir;
+	shade_info.c_diffuse = (t_color){0, 0, 0};
+	shade_info.c_specular = (t_color){0, 0, 0};
+	shade_info.color_final = (t_color){0, 0, 0};
+	p_to_l = v_substract(light_origin, hit_point);
+	shade_info.point_to_light = p_to_l;
+	shade_info.point_to_light_dir = v_normalize(&p_to_l);
+	shade_info.hit_point = *hit_point;
+	shade_info.obj = obj;
+	shade_info.surface_normal = obj->f_get_normal(obj, hit_point);
+	shade_info.surface_normal = v_normalize(&shade_info.surface_normal);
+	shade_info.base_color = obj->f_get_color(obj);
+	shade_info.light_origin = *light_origin;
+	shade_info.theta = acos(v_dot(&shade_info.surface_normal, &shade_info.point_to_light_dir));
+	shade_info.ray = *ray;
 	return (shade_info);
+}
+
+void	set_hitpoint(t_vec3 *hit_point, const t_ray ray, double t)
+{
+	*hit_point = v_multiply(&ray.dir, t);
+	*hit_point = v_add(&ray.origin, hit_point);
+}
+
+t_color	trace_ray(t_data *d, t_ray ray)
+{
+	const t_obj		*hitted_obj;
+	t_vec3			hit_point;
+	t_shade_info	s_i;
+	double			t;
+	
+	t = INF;
+	hitted_obj = find_first_obj(d, &ray, &t);
+	if (hitted_obj)
+	{
+		set_hitpoint(&hit_point, ray, t);
+		s_i.t = t;
+		s_i = fill_info((t_obj *)hitted_obj, &hit_point, &d->light->origin, &ray);
+		if (!in_shadow(d, &s_i))
+			compute_illumination(d, &s_i);
+		else
+			s_i.color_final = color_multiply(&s_i.base_color, d->ambient_light->brightness);
+	}
+	else
+		s_i.color_final = (t_color){0, 0, 0};
+	return (s_i.color_final);
 }
 
 void	render(t_data *data)
 {
-	t_ray			ray;
-	const t_obj		*hitted_obj;
-	double			t;
-	t_color			color;
-	t_color			color2;
-	t_vec3			mapped_coords;
-	t_vec3			hit_point;
-	t_vec3			surface_normal;
-	t_vec3			light_to_hit_dir;
-	t_shade_info	shade_info;
-	int				pix_y;
-	int				pix_x;
+	t_ray	ray;
+	t_vec3	mapped_coords;
+	t_color	c;
+	int		pix_y;
+	int		pix_x;
 
-	hit_point = (t_vec3){0, 0, 0};
-	surface_normal = (t_vec3){0, 0, 0};
-	light_to_hit_dir = (t_vec3){0, 0, 0};
 	ray.origin = data->cam->origin;
 	pix_x = data->screen->x_pix_min - 1;
 	while (++pix_x < data->screen->x_pix_max)
@@ -159,30 +204,10 @@ void	render(t_data *data)
 		pix_y = -1;
 		while (++pix_y < HEIGHT)
 		{
-			t = INF;
 			pixel_to_virtual(data, &pix_x, &pix_y, &mapped_coords);
 			ray.dir = v_normalize(&mapped_coords);
-			hitted_obj = find_first_obj(data, &ray, &t);
-			if (hitted_obj)
-			{
-				hit_point = v_multiply(&ray.dir, t);
-				hit_point = v_add(&ray.origin, &hit_point);
-				color = hitted_obj->f_get_color(hitted_obj);
-				light_to_hit_dir = v_substract(&hit_point, &data->light->origin);
-				light_to_hit_dir = v_normalize(&light_to_hit_dir);
-				surface_normal = hitted_obj->f_get_normal(hitted_obj, &hit_point);
-				
-				shade_info = fill_shade_info(&color, &hit_point, &surface_normal, &light_to_hit_dir);
-				color2 = color;
-				
-				compute_illumination(data, &color2, &hit_point, &surface_normal);
-				if (any_obj_between_light_and_hit_point(data, &hit_point, &data->light->origin, t))
-					color2 = (t_color){0, 0, 0};
-				color_mix(&color, color_multiply(&color, data->ambient_light->brightness), color2);
-			}
-			else
-				color = (t_color){0, 0, 0};
-			my_mlx_pixel_put(data->mlx, pix_x, pix_y, rgb_to_int(&color));
+			c = trace_ray(data, ray);
+			my_mlx_pixel_put(data->mlx, pix_x, pix_y, rgb_to_int(&c));
 		}
 	}
 }

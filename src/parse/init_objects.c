@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   init_objects.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 00:52:24 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/22 02:27:01 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/22 06:34:24 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minirt.h"
 
-int	submariner(void *new, void **ptr)
+int	submariner(void *new, char **ptr)
 {
 	free_2d(ptr);
 	free(new);

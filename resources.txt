@@ -6,6 +6,7 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tra
 https://cs.wellesley.edu/~cs307/readings/09-lighting.html
 https://www.gabrielgambetta.com/computer-graphics-from-scratch/03-light.html
 https://learnopengl.com/Lighting/Basic-Lighting
+https://resources.mpi-inf.mpg.de/departments/d4/teaching/ws200708/cg/slides/CG15-Camera.pdf
 
 
 https://www.youtube.com/watch?v=A61S_2swwAc

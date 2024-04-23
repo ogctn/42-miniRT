@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:02:06 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/22 01:04:01 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/23 04:28:43 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@ double	v_dot(const t_vec3 *u, const t_vec3 *v);
 t_vec3	v_cross(const t_vec3 *u, const t_vec3 *v);
 t_vec3	v_normalize(const t_vec3 *u);
 double	v_length(const t_vec3 *u);
+t_vec3	v_rotate(t_vec3 *v, t_vec3 *axis, double theta);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_elements.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:39:23 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/21 14:15:25 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/23 03:47:00 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	init_ambient(t_data *data, char *line)
 static void	copy_cam(t_cam *dest, t_cam *src)
 {
 	dest->origin = src->origin;
+	src->dir = v_normalize(&src->dir);
 	dest->dir = src->dir;
 	dest->fov = src->fov;
 }

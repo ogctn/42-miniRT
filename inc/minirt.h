@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:44 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/22 05:13:45 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/23 02:16:13 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,10 +171,19 @@ typedef struct t_screen
 
 typedef struct s_shade_info
 {
-	t_color		*color;
-	t_vec3		*hit_point;
-	t_vec3		*surface_normal;
-	t_vec3		*point_to_light_dir;
+	t_color 	c_diffuse;
+	t_color 	c_specular;
+	t_color 	color_final;
+	t_obj		*obj;
+	t_color		base_color;
+	t_vec3		light_origin;
+	t_vec3		hit_point;
+	t_vec3		point_to_light;
+	t_vec3		point_to_light_dir;
+	t_vec3		surface_normal;
+	t_ray		ray;
+	double		t;
+	double 		theta;
 }	t_shade_info;
 
 typedef struct s_data
@@ -237,7 +246,6 @@ void	free_objects(t_data *genel);
 int		free_exit(t_data *genel);
 
 t_color	color_multiply(t_color *color, double factor);
-void	compute_illumination(t_data *data, t_color *color,
-			t_vec3 *hit_point, t_vec3 *normal);
+void	compute_illumination(t_data *data, t_shade_info *si);
 void	color_mix(t_color *color, t_color ambient, t_color light);
 #endif

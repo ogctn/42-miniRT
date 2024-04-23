@@ -1,6 +1,6 @@
 NAME	=	miniRT
 CC		=	gcc
-FLAGS	=	#-Wall -Wextra -Werror
+FLAGS	=	-Wall -Wextra -Werror
 RM		=	rm -rf
 LIBFT	=	lib/libft/libft.a
 MLX		=	lib/mlx/libmlx.a
@@ -34,7 +34,7 @@ all:$(MLX) $(NAME)
 
 $(NAME):$(MLX) $(OBJ_DIR) $(OBJS)
 	@make -C lib/libft
-	$(CC) $(FLAGS) $(OBJS) $(LIBFT) -L./lib/mlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) $(LIBFT) -L./lib/mlx -lmlx -framework OpenGL -framework AppKit -O3 -o $(NAME)
 	@echo "****   minirt ok!    ****"
 
 $(OBJ_DIR):
