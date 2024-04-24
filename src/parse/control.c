@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:05:35 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/22 02:55:22 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/24 22:00:18 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,42 @@ int	control_rgb(t_color clr)
 	return (1);
 }
 
+static int	control_error_files(char *str)
+{
+	int	i;
+	int	count;
+
+	i = -1;
+	count = 0;
+	while (str[++i])
+	{
+		if (str[i] == '/')
+			count++;
+	}
+	while (count > 0)
+	{
+		if (*str == '/')
+			count --;
+		str++;
+	}
+	i = -1;
+	count = ft_strlen(str) - 3;
+	while (++i < count)
+	{
+		if (str[i] != '.')
+			return (0);
+	}
+	return (1);
+}
+
 int	control_extension(char *str)
 {
 	int	i;
 
 	i = 0;
-	if (str[i] == '.')
-		return (1);
 	while (str[i])
-	{
-		if (str[i] == '/' && str[i + 1] && str[i + 1] == '.')
-			return (1);
 		i++;
-	}
+	if (ft_strcmp(ft_substr(str, i - 3, 3), ".rt") == 0)
+		return (control_error_files(str));
 	return (ft_strcmp(ft_substr(str, i - 3, 3), ".rt"));
 }
