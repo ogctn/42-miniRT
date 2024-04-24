@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:17:41 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/25 00:11:21 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/25 00:19:01 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,13 @@ int	cntrldec1(char *str)
 	while (ptr[i])
 	{
 		if (control_after_comma(ptr[i]))
+		{
+			free_2d(ptr);
 			return (1);
+		}
 		i++;
 	}
+	free_2d(ptr);
 	return (0);
 }
 
