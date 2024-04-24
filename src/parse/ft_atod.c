@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 15:10:11 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/22 01:08:36 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/24 23:26:27 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,25 @@ static double	calculate_number(const char *str, int sign)
 	return (result);
 }
 
+double	ft_number(const char *str)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+
+	while (str[i])
+	{
+		if (str[i] <= '9' && str[i] >= '0')
+			count++;
+		i++;
+	}
+	if (count > 0)
+		return (1);
+	return (0);
+}
+
 double	ft_atod(const char *str)
 {
 	double	result;
@@ -75,6 +94,8 @@ double	ft_atod(const char *str)
 	while (*str == ' ')
 		str++;
 	if (!control_atod(str))
+		return (INFINITY);
+	if (!ft_number(str))
 		return (INFINITY);
 	if (*str == '-')
 	{

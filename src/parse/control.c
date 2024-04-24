@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:05:35 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/24 22:00:18 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/24 23:26:13 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,22 @@ int	control_extension(char *str)
 	if (ft_strcmp(ft_substr(str, i - 3, 3), ".rt") == 0)
 		return (control_error_files(str));
 	return (ft_strcmp(ft_substr(str, i - 3, 3), ".rt"));
+}
+
+int	comma_control(char *str)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (str[i])
+	{
+		if (str[i] == ',')
+			count++;
+		i++;
+	}
+	if (count != 2)
+		return (1);
+	return (0);
 }

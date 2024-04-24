@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_objects.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 00:52:24 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/22 06:34:24 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/24 23:26:44 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ int	init_pl(t_data *data, char *line, int index)
 
 	new = ft_calloc(sizeof(t_plane), 1);
 	ptr = ft_split(line, ' ');
-	if (size_2d(ptr) != 4)
+	if (size_2d(ptr) != 4 || comma_control(ptr[1])
+		|| comma_control(ptr[2]) || comma_control(ptr[3]))
 		return (submariner(new, ptr));
 	ptr_2 = ft_split(ptr[1], ',');
 	if (!ft_assign_vec(ptr_2, &new->point, 0))
@@ -55,7 +56,8 @@ int	init_cy(t_data *data, char *line, int index)
 
 	new = ft_calloc(sizeof(t_cylinder), 1);
 	ptr = ft_split(line, ' ');
-	if (size_2d(ptr) != 6)
+	if (size_2d(ptr) != 6 || comma_control(ptr[1]) || comma_control(ptr[2])
+		|| comma_control(ptr[5]))
 		return (submariner(new, ptr));
 	ptr_2 = ft_split(ptr[1], ',');
 	if (!ft_assign_vec(ptr_2, &new->origin, 0))
@@ -82,7 +84,7 @@ int	init_sp(t_data *data, char *line, int index)
 
 	new = ft_calloc(sizeof(t_sphere), 1);
 	ptr = ft_split(line, ' ');
-	if (size_2d(ptr) != 4)
+	if (size_2d(ptr) != 4 || comma_control(ptr[1]) || comma_control(ptr[3]))
 		return (submariner(new, ptr));
 	ptr_2 = ft_split(ptr[1], ',');
 	if (!ft_assign_vec(ptr_2, &new->center, 0))
