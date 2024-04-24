@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:55 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/23 04:32:14 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/24 21:08:20 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	render(t_data *data);
 int		rgb_to_int(const t_color *rgb);
 void	init_viewport(t_data *d);
 
-
 void	reset_camera(t_data *d)
 {
 	d->cam->origin = d->default_cam->origin;
@@ -33,7 +32,8 @@ void	change_cam_dir(t_data *d, int keycode)
 	t_vec3	tmp;
 	double	d_theta;
 
-	if (keycode == KEY_UP || keycode == KEY_DOWN || keycode == KEY_LEFT || keycode == KEY_RIGHT)
+	if (keycode == KEY_UP || keycode == KEY_DOWN
+		|| keycode == KEY_LEFT || keycode == KEY_RIGHT)
 	{
 		tmp = (t_vec3){0, 0, 0};
 		d_theta = 0.1;
@@ -52,8 +52,8 @@ void	change_cam_dir(t_data *d, int keycode)
 
 void	cam_move(t_data *d, int keycode)
 {
-	t_vec3 tmp;
-	
+	t_vec3	tmp;
+
 	tmp = (t_vec3){0, 0, 0};
 	if (keycode == KEY_R)
 		reset_camera(d);
@@ -137,7 +137,8 @@ bool	in_shadow(t_data *data, t_shade_info *si)
 	return (false);
 }
 
-t_shade_info	fill_info(t_obj *obj, t_vec3 *hit_point, t_vec3 *light_origin, t_ray *ray)
+t_shade_info	fill_info(t_obj *obj, t_vec3 *hit_point
+	, t_vec3 *light_origin, t_ray *ray)
 {
 	t_shade_info	shade_info;
 	t_vec3			p_to_l;
@@ -154,7 +155,8 @@ t_shade_info	fill_info(t_obj *obj, t_vec3 *hit_point, t_vec3 *light_origin, t_ra
 	shade_info.surface_normal = v_normalize(&shade_info.surface_normal);
 	shade_info.base_color = obj->f_get_color(obj);
 	shade_info.light_origin = *light_origin;
-	shade_info.theta = acos(v_dot(&shade_info.surface_normal, &shade_info.point_to_light_dir));
+	shade_info.theta = acos(v_dot(&shade_info.surface_normal,
+				&shade_info.point_to_light_dir));
 	shade_info.ray = *ray;
 	return (shade_info);
 }
@@ -171,18 +173,20 @@ t_color	trace_ray(t_data *d, t_ray ray)
 	t_vec3			hit_point;
 	t_shade_info	s_i;
 	double			t;
-	
+
 	t = INF;
 	hitted_obj = find_first_obj(d, &ray, &t);
 	if (hitted_obj)
 	{
 		set_hitpoint(&hit_point, ray, t);
 		s_i.t = t;
-		s_i = fill_info((t_obj *)hitted_obj, &hit_point, &d->light->origin, &ray);
+		s_i = fill_info((t_obj *)hitted_obj, &hit_point,
+				&d->light->origin, &ray);
 		if (!in_shadow(d, &s_i))
 			compute_illumination(d, &s_i);
 		else
-			s_i.color_final = color_multiply(&s_i.base_color, d->ambient_light->brightness);
+			s_i.color_final = color_multiply(&s_i.base_color,
+					d->ambient_light->brightness);
 	}
 	else
 		s_i.color_final = (t_color){0, 0, 0};
@@ -241,7 +245,3 @@ void	main_loop(t_data *d)
 	mlx_hook(d->mlx->win_p, EVENT_KEY_PRESS, 1, &handle_key, d);
 	mlx_loop(d->mlx->mlx_p);
 }
-
-// void __attribute__((destructor)) a(){
-// 	system("leaks test.out");
-// }

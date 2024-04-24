@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   color.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 03:02:34 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/23 04:32:01 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/24 20:57:41 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ void	compute_illumination(t_data *data, t_shade_info *si)
 	double	dot;
 	t_vec3	temp;
 
-	si->color_final = color_multiply(&si->base_color, data->ambient_light->brightness);
+	si->color_final = color_multiply(&si->base_color,
+			data->ambient_light->brightness);
 	dot = v_dot(&si->point_to_light_dir, &si->surface_normal);
 	if (dot > 0)
 	{
