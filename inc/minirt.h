@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:44 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/24 21:34:35 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/24 23:35:44 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,6 +222,7 @@ double	ft_atod(const char *str);
 int		control_rgb(t_color clr);
 void	control_elements(t_data *data);
 int		control_extension(char *str);
+int		comma_control(char *str);
 
 void	set_sphere(t_data *d, t_sphere *s, int i);
 void	set_stuffs(t_data *d);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:27:25 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/23 03:43:28 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/24 23:37:26 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,15 +72,20 @@ static int	find_and_direct(char *line, t_data *data)
 static void	init_elements(t_data *data)
 {
 	char	*line;
+	char	*tmp;
 
 	line = get_next_line(data->fd);
 	while (line)
 	{
-		if (!find_and_direct(line, data))
+		tmp = ft_substr(line, 0, ft_strlen(line) - 1);
+
+		if (!find_and_direct(tmp, data))
 		{
+			free(tmp);
 			free(line);
 			exit(1);
 		}
+		free(tmp);
 		free(line);
 		line = get_next_line(data->fd);
 	}
