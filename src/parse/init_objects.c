@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 00:52:24 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/24 23:26:44 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/25 00:11:49 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	init_pl(t_data *data, char *line, int index)
 	new = ft_calloc(sizeof(t_plane), 1);
 	ptr = ft_split(line, ' ');
 	if (size_2d(ptr) != 4 || comma_control(ptr[1])
-		|| comma_control(ptr[2]) || comma_control(ptr[3]))
+		|| comma_control(ptr[2]) || comma_control(ptr[3]) || cntrldec1(ptr[2]))
 		return (submariner(new, ptr));
 	ptr_2 = ft_split(ptr[1], ',');
 	if (!ft_assign_vec(ptr_2, &new->point, 0))
@@ -57,7 +57,7 @@ int	init_cy(t_data *data, char *line, int index)
 	new = ft_calloc(sizeof(t_cylinder), 1);
 	ptr = ft_split(line, ' ');
 	if (size_2d(ptr) != 6 || comma_control(ptr[1]) || comma_control(ptr[2])
-		|| comma_control(ptr[5]))
+		|| comma_control(ptr[5]) || cntrldec1(ptr[2]))
 		return (submariner(new, ptr));
 	ptr_2 = ft_split(ptr[1], ',');
 	if (!ft_assign_vec(ptr_2, &new->origin, 0))

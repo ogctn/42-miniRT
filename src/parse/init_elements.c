@@ -6,7 +6,7 @@
 /*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:39:23 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/24 23:26:35 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/25 00:12:06 by sgundogd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	init_ambient(t_data *data, char *line)
 	char	**ptr_2;
 
 	ptr = ft_split(line, ' ');
-	if (size_2d(ptr) != 3 || comma_control(ptr[2]))
+	if (size_2d(ptr) != 3 || comma_control(ptr[2]) || cntrldec0(ptr[1]))
 		return (free_2d(ptr), printf("Error!\nWrong Definition\n"), 0);
 	ptr_2 = ft_split(ptr[2], ',');
 	if (!ft_assign_color(ptr_2, &data->ambient_light->color))
@@ -43,7 +43,8 @@ int	init_cam(t_data *data, char *line)
 	char	**ptr_3;
 
 	ptr = ft_split(line, ' ');
-	if (size_2d(ptr) != 4 || comma_control(ptr[1]) || comma_control(ptr[2]))
+	if (size_2d(ptr) != 4 || comma_control(ptr[1]) || comma_control(ptr[2])
+		|| cntrldec1(ptr[2]))
 		return (free_2d(ptr), printf("Error!\nWrong Definition\n"), 0);
 	ptr_2 = ft_split(ptr[1], ',');
 	if (!ft_assign_vec(ptr_2, &data->cam->origin, 0))
@@ -64,7 +65,8 @@ int	init_light(t_data *data, char *line)
 	char	**ptr_3;
 
 	ptr = ft_split(line, ' ');
-	if (size_2d(ptr) != 4 || comma_control(ptr[1]) || comma_control(ptr[3]))
+	if (size_2d(ptr) != 4 || comma_control(ptr[1]) || comma_control(ptr[3])
+		|| cntrldec0(ptr[2]))
 		return (free_2d(ptr), printf("Error!\nWrong Definition\n"), 0);
 	ptr_2 = ft_split(ptr[1], ',');
 	if (!ft_assign_vec(ptr_2, &data->light->origin, 0))
