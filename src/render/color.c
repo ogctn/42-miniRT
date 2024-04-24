@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   color.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 03:02:34 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/24 20:57:41 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/24 21:23:28 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minirt.h"
-
-bool	is_shadowed(t_data *data, t_shade_info *si);
 
 void	color_clamp(t_color *c)
 {

@@ -22,10 +22,13 @@ SRCS	=	$(SRC_DIR)/main.c \
 			$(SRC_DIR)/render/intersections_cy.c \
 			$(SRC_DIR)/render/intersections.c \
 			$(SRC_DIR)/render/mlx_utils.c \
+			$(SRC_DIR)/render/render.c \
+			$(SRC_DIR)/render/render2.c \
 			$(SRC_DIR)/render/render_utils.c \
 			$(SRC_DIR)/render/test.c \
 			$(SRC_DIR)/render/vector2.c \
 			$(SRC_DIR)/render/vector.c \
+			$(SRC_DIR)/render/key_events.c \
 
 OBJ_DIR	=	obj
 OBJS	=	$(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
@@ -34,7 +37,7 @@ all:$(MLX) $(NAME)
 
 $(NAME):$(MLX) $(OBJ_DIR) $(OBJS)
 	@make -C lib/libft
-	$(CC) $(FLAGS) $(OBJS) $(LIBFT) -L./lib/mlx -lmlx -framework OpenGL -framework AppKit -O3 -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) $(LIBFT) -L./lib/mlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
 	@echo "****   minirt ok!    ****"
 
 $(OBJ_DIR):

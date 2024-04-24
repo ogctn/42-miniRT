@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 01:00:44 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/04/23 02:16:13 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/24 21:34:35 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,6 +235,7 @@ t_color	f_get_color(const t_obj *obj);
 t_vec3	f_get_normal(const t_obj *obj, t_vec3 *hit_point);
 void	render(t_data *data);
 void	cam_move(t_data *genel, int keycode);
+void	init_viewport(t_data *d);
 
 void	assign_cy_vectors(const t_ray *ray, const t_cylinder *cy, t_cy_vec *d);
 void	find_x1(const t_ray *ray, const t_cylinder *cy, t_cy_vec *data);
@@ -245,7 +246,13 @@ double	find_min_3(double a, double b, double c);
 void	free_objects(t_data *genel);
 int		free_exit(t_data *genel);
 
+const t_obj	*find_first_obj(t_data *data, const t_ray *ray, double *t);
 t_color	color_multiply(t_color *color, double factor);
 void	compute_illumination(t_data *data, t_shade_info *si);
 void	color_mix(t_color *color, t_color ambient, t_color light);
+bool	in_shadow(t_data *data, t_shade_info *si);
+
+t_shade_info	fill_info(t_obj *obj, t_vec3 *hit_point
+	, t_vec3 *light_origin, t_ray *ray);
+
 #endif
