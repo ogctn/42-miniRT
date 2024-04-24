@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 15:27:25 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/24 23:37:26 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/24 23:45:26 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ static void	init_elements(t_data *data)
 	while (line)
 	{
 		tmp = ft_substr(line, 0, ft_strlen(line) - 1);
-
 		if (!find_and_direct(tmp, data))
 		{
 			free(tmp);

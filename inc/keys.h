@@ -6,7 +6,7 @@
 /*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 14:53:52 by ogcetin           #+#    #+#             */
-/*   Updated: 2024/02/29 01:05:50 by ogcetin          ###   ########.fr       */
+/*   Updated: 2024/04/24 23:45:47 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,5 @@
 # define EVENT_KEY_PRESS 2
 # define EVENT_BUTTON_PRESS 4
 # define EVENT_BUTTON_RELEASE 5
-
 
 #endif
