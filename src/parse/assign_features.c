@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   assign_features.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgundogd <sgundogd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogcetin <ogcetin@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:17:41 by sgundogd          #+#    #+#             */
-/*   Updated: 2024/04/25 00:19:01 by sgundogd         ###   ########.fr       */
+/*   Updated: 2024/04/25 00:38:20 by ogcetin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	control_after_comma(char *str)
 	{
 		if (str[i] == '.')
 		{
-			j = i;
+			j = i + 1;
 			while (str[j])
 			{
 				if (str[j] != '0')
